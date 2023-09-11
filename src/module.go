@@ -14,8 +14,9 @@ import (
 type Module struct {}
 
 func (m *Module) New(app *echo.Echo) {
-	m.NewIOC()
-	r := NewRoute(app)
+	ioc := m.NewIOC()
+
+	r := NewRoute(app, ioc)
 	r.Init()
 }
 
