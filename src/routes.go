@@ -17,5 +17,11 @@ func NewRoute(app *echo.Echo) *Route {
 }
 
 func (r *Route) Init() {
-	
+	r.Test()
+}
+
+func (r *Route) Test() {
+	r.app.GET("/test", func(c echo.Context) error {
+		return c.String(200, "hello world")
+	})
 }
