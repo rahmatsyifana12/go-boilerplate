@@ -37,7 +37,7 @@ func (c *UserControllerImpl) GetUserByID(ctx echo.Context) (err error) {
 		params	*dtos.GetUserByIDParams = new(dtos.GetUserByIDParams)
 	)
 
-	if err = ctx.Bind(params); err != nil {
+	if err := (&echo.DefaultBinder{}).BindPathParams(ctx, params); err != nil {
 		return ctx.JSON(http.StatusBadRequest, err.Error())
 	}
 

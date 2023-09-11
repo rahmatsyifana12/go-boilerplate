@@ -7,5 +7,5 @@ type GetUserByIDResponse struct {
 }
 
 type GetUserByIDParams struct {
-	UserID uint `json:"user_id"`
+	UserID uint `param:"user_id" validate:"required"`
 }
