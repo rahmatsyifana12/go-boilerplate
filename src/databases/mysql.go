@@ -5,13 +5,13 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func NewMysqlClient() (*gorm.DB, error) {
+func NewPostgresClient() (*gorm.DB, error) {
 	var (
-		connection	*gorm.DB
+		db			*gorm.DB
 		err			error
 	)
 
@@ -20,18 +20,18 @@ func NewMysqlClient() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Bangkok",
+		os.Getenv("DB_HOST"),
 		os.Getenv("DB_USERNAME"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"),
 		os.Getenv("DB_PORT"),
-		os.Getenv("DB_HOST"),
 	)
 
-	connection, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 
-	return connection, nil
+	return db, nil
 }

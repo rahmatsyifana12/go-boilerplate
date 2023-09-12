@@ -20,7 +20,7 @@ type UserRepositoryImpl struct {
 
 func NewUserRepository(ioc di.Container) *UserRepositoryImpl {
 	return &UserRepositoryImpl{
-		db: ioc.Get(constants.MYSQL).(*gorm.DB),
+		db: ioc.Get(constants.POSTGRES).(*gorm.DB),
 	}
 }
 

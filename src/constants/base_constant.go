@@ -1,7 +1,7 @@
 package constants
 
 const (
-	MYSQL = "mysql"
+	POSTGRES = "postgres"
 	SERVICE = "service"
 	REPOSITORY = "repository"
 	CONTROLLER = "controller"

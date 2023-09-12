@@ -24,9 +24,9 @@ func (m *Module) NewIOC() di.Container {
 	builder, _ := di.NewBuilder()
 	_ = builder.Add(
 		di.Def{
-			Name: constants.MYSQL,
+			Name: constants.POSTGRES,
 			Build: func(ctn di.Container) (interface{}, error) {
-				db, err := databases.NewMysqlClient()
+				db, err := databases.NewPostgresClient()
 				return db, err
 			},
 		},
