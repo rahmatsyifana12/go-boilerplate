@@ -24,12 +24,13 @@ func NewRoute(app *echo.Echo, ioc di.Container) *Route {
 
 func (r *Route) Init() {
 	r.Test()
+	r.Auth()
 	r.User()
 }
 
 func (r *Route) Test() {
 	r.app.GET("/test", func(c echo.Context) error {
-		return c.String(200, "hello world")
+		return c.String(200, "Your application is working just fine :)")
 	})
 }
 
@@ -37,4 +38,9 @@ func (r *Route) User() {
 	user := r.router.Group("user")
 	user.POST("", r.controller.User.CreateUser)
 	user.GET("/:userID", r.controller.User.GetUserByID)
+}
+
+func (r *Route) Auth() {
+	auth := r.router.Group("auth")
+	auth.POST("/login", r.controller.Auth.Login)
 }
