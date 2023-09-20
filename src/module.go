@@ -3,7 +3,7 @@ package main
 import (
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/controllers"
-	"go-boilerplate/src/databases"
+	"go-boilerplate/src/pkg/databases"
 	"go-boilerplate/src/repositories"
 	"go-boilerplate/src/services"
 
