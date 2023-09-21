@@ -9,7 +9,7 @@ import (
 )
 
 type AuthController interface {
-	Login(c echo.Context) (error)
+	Login(c echo.Context) error
 }
 
 type AuthControllerImpl struct {

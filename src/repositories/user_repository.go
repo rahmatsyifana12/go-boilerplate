@@ -10,8 +10,9 @@ import (
 )
 
 type UserRepository interface {
-	CreateUser(ctx echo.Context) (error)
-	GetUserByID(ctx echo.Context, userID uint) (models.User, error)
+	CreateUser(c echo.Context, user models.User) error
+	GetUserByID(c echo.Context, userID uint) (models.User, error)
+	GetUserByUsername(c echo.Context, username string) (models.User, error)
 }
 
 type UserRepositoryImpl struct {
@@ -24,11 +25,18 @@ func NewUserRepository(ioc di.Container) *UserRepositoryImpl {
 	}
 }
 
-func (r *UserRepositoryImpl) CreateUser(ctx echo.Context) (err error) {
+func (r *UserRepositoryImpl) CreateUser(c echo.Context, user models.User) (err error) {
+	err = r.db.Create(&user).WithContext(c.Request().Context()).Error
 	return
 }
 
-func (r *UserRepositoryImpl) GetUserByID(ctx echo.Context, userID uint) (user models.User, err error) {
-	err = r.db.First(&user, userID).Error
+func (r *UserRepositoryImpl) GetUserByID(c echo.Context, userID uint) (user models.User, err error) {
+	err = r.db.First(&user).Where("user_id = ?", userID).WithContext(c.Request().Context()).Error
+	return
+}
+
+func (r *UserRepositoryImpl) GetUserByUsername(c echo.Context, username string) (user models.User, err error) {
+	// err = r.db.First(&user).Where("username = ?", username).WithContext(c.Request().Context()).Error
+	err = r.db.Select("id", "username").Where("username = ?", username).First(&user).WithContext(c.Request().Context()).Error
 	return
 }

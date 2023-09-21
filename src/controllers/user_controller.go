@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/dtos"
 	"go-boilerplate/src/services"
@@ -12,8 +11,8 @@ import (
 )
 
 type UserController interface {
-	CreateUser(ctx echo.Context) (error)
-	GetUserByID(ctx echo.Context) (error)
+	CreateUser(c echo.Context) error
+	GetUserByID(c echo.Context) error
 }
 
 type UserControllerImpl struct {
@@ -26,25 +25,42 @@ func NewUserController(ioc di.Container) *UserControllerImpl {
     }
 }
 
-func (c *UserControllerImpl) CreateUser(ctx echo.Context) (err error) {
-    fmt.Println("CreateUser")
-    c.service.User.CreateUser(ctx)
-    return
+func (t *UserControllerImpl) CreateUser(c echo.Context) (err error) {
+	var (
+		createUserRequest	dtos.CreateUserRequest
+	)
+
+    if err = c.Bind(&createUserRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	err = t.service.User.CreateUser(c, createUserRequest)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, dtos.Response{
+			Status:  "failed",
+			Message: err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, dtos.Response{
+		Status:  "success",
+		Message: "Successfully created a user",
+	})
 }
 
-func (c *UserControllerImpl) GetUserByID(ctx echo.Context) (err error) {
+func (t *UserControllerImpl) GetUserByID(c echo.Context) (err error) {
 	var (
 		params	*dtos.GetUserByIDParams = new(dtos.GetUserByIDParams)
 	)
 
-	if err := (&echo.DefaultBinder{}).BindPathParams(ctx, params); err != nil {
-		return ctx.JSON(http.StatusBadRequest, err.Error())
+	if err := (&echo.DefaultBinder{}).BindPathParams(c, params); err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	data, err := c.service.User.GetUserByID(ctx, params.UserID)
+	data, err := t.service.User.GetUserByID(c, params.UserID)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return ctx.JSON(http.StatusOK, data)
+	return c.JSON(http.StatusOK, data)
 }

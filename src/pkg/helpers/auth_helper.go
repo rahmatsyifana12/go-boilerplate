@@ -4,8 +4,6 @@ import (
 	"errors"
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/dtos"
-	"go-boilerplate/src/pkg/responses"
-	"net/http"
 	"os"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -18,9 +16,7 @@ func GenerateJWTString(claims dtos.AuthClaims) (token string, err error) {
 	jwtSecret := []byte(os.Getenv("JWT_SECRET"))
 	token, err = rawToken.SignedString(jwtSecret)
 	if err != nil {
-		err = responses.NewError().
-			WithCode(http.StatusInternalServerError).
-			WithMessage("Failed to sign JWT.")
+		err = errors.New("failed to sign JWT")
 	}
 	return
 }
@@ -30,10 +26,7 @@ func ParseAndValidateJWT(token string) (claims dtos.AuthClaims, err error) {
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 	if err != nil {
-		err = responses.NewError().
-			WithError(err).
-			WithCode(http.StatusUnauthorized).
-			WithMessage("Failed to validate token.")
+		err = errors.New("failed to validate token")
 	}
 
 	return
@@ -42,10 +35,7 @@ func ParseAndValidateJWT(token string) (claims dtos.AuthClaims, err error) {
 func GetAuthClaims(ctx echo.Context) (claims dtos.AuthClaims, err error) {
 	claims, ok := ctx.Get(constants.AuthClaimsKey).(dtos.AuthClaims)
 	if !ok {
-		err = responses.NewError().
-			WithCode(http.StatusInternalServerError).
-			WithError(errors.New("failed to cast context value to user's claims")).
-			WithMessage("Failed to get user's JWT claims.")
+		err = errors.New("failed to cast context value to user's claims")
 	}
 	return
 }
