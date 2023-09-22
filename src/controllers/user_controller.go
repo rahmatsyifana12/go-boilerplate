@@ -3,6 +3,7 @@ package controllers
 import (
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/dtos"
+	"go-boilerplate/src/pkg/responses"
 	"go-boilerplate/src/services"
 	"net/http"
 
@@ -27,25 +28,21 @@ func NewUserController(ioc di.Container) *UserControllerImpl {
 
 func (t *UserControllerImpl) CreateUser(c echo.Context) (err error) {
 	var (
-		createUserRequest	dtos.CreateUserRequest
+		params	dtos.CreateUserRequest
 	)
 
-    if err = c.Bind(&createUserRequest); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+    if err = c.Bind(&params); err != nil {
+		return responses.NewError().
+			WithError(err).
+			WithCode(http.StatusBadRequest).
+			WithMessage("failed to bind params")
 	}
 
-	err = t.service.User.CreateUser(c, createUserRequest)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, dtos.Response{
-			Status:  "failed",
-			Message: err.Error(),
-		})
-	}
-
-	return c.JSON(http.StatusOK, dtos.Response{
-		Status:  "success",
-		Message: "Successfully created a user",
-	})
+	err = t.service.User.CreateUser(c, params)
+	return responses.New().
+		WithError(err).
+		WithSuccessCode(http.StatusCreated).
+		Send(c)
 }
 
 func (t *UserControllerImpl) GetUserByID(c echo.Context) (err error) {
