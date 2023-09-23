@@ -9,6 +9,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/sarulabs/di"
+	"gorm.io/gorm"
 )
 
 type UserService interface {
@@ -28,7 +29,7 @@ func NewUserService(ioc di.Container) *UserServiceImpl {
 
 func (s *UserServiceImpl) CreateUser(c echo.Context, createUserRequest dtos.CreateUserRequest) (err error) {
 	user, err := s.repository.User.GetUserByUsername(c, createUserRequest.Username)
-	if err != nil && err.Error() != "record not found" {
+	if err != nil && err != gorm.ErrRecordNotFound {
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
@@ -64,7 +65,7 @@ func (s *UserServiceImpl) GetUserByID(c echo.Context, userID uint) (data dtos.Ge
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
-			WithMessage(err.Error())
+			WithMessage("Cannot find user with the given id")
 		return
 	}
 

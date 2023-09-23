@@ -31,7 +31,7 @@ func (r *UserRepositoryImpl) CreateUser(c echo.Context, user models.User) (err e
 }
 
 func (r *UserRepositoryImpl) GetUserByID(c echo.Context, userID uint) (user models.User, err error) {
-	err = r.db.First(&user).Where("user_id = ?", userID).WithContext(c.Request().Context()).Error
+	err = r.db.Where("id = ?", userID).First(&user).WithContext(c.Request().Context()).Error
 	return
 }
 

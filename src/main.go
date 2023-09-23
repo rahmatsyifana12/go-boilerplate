@@ -8,15 +8,15 @@ import (
 )
 
 func main() {
-    app := echo.New()
+    e := echo.New()
 
 	module := Module{}
-	module.New(app)
+	module.New(e)
     
     port, found := os.LookupEnv("PORT")
 	if !found {
 		port = "5000"
 	}
 
-	app.Logger.Fatal(app.Start(fmt.Sprintf(":%s", port)))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }

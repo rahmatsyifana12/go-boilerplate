@@ -37,7 +37,7 @@ func (r *Route) Test() {
 func (r *Route) User() {
 	user := r.router.Group("users")
 	user.POST("/create", r.controller.User.CreateUser)
-	user.GET("/:userID", r.controller.User.GetUserByID)
+	user.GET("/:user_id", r.controller.User.GetUserByID)
 }
 
 func (r *Route) Auth() {

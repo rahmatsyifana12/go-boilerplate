@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/dtos"
 	"go-boilerplate/src/pkg/responses"
@@ -35,29 +36,37 @@ func (t *UserControllerImpl) CreateUser(c echo.Context) (err error) {
 		return responses.NewError().
 			WithError(err).
 			WithCode(http.StatusBadRequest).
-			WithMessage("failed to bind params")
+			WithMessage("failed to bind parameters")
 	}
 
 	err = t.service.User.CreateUser(c, params)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusCreated).
+		WithMessage("successfully created a new user").
 		Send(c)
 }
 
 func (t *UserControllerImpl) GetUserByID(c echo.Context) (err error) {
 	var (
-		params	*dtos.GetUserByIDParams = new(dtos.GetUserByIDParams)
+		params	dtos.GetUserByIDParams
 	)
 
-	if err := (&echo.DefaultBinder{}).BindPathParams(c, params); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+	if err = c.Bind(&params); err != nil {
+		err = responses.NewError().
+			WithCode(http.StatusBadRequest).
+			WithError(err).
+			WithMessage("Failed to bind parameters")
+		return
 	}
+
+	fmt.Println(params)
 
 	data, err := t.service.User.GetUserByID(c, params.UserID)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	return c.JSON(http.StatusOK, data)
+	return responses.New().
+		WithError(err).
+		WithSuccessCode(http.StatusOK).
+		WithMessage("successfully retrieved a user").
+		WithData(data).
+		Send(c)
 }

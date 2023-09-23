@@ -1,6 +1,7 @@
 package responses
 
 import (
+	"go-boilerplate/src/dtos"
 	"net/http"
 	"reflect"
 
@@ -11,6 +12,7 @@ type ResponseBuilder struct {
 	Data        any
 	Error       error
 	SuccessCode int
+	Message		string
 }
 
 func New() *ResponseBuilder {
@@ -29,6 +31,11 @@ func (b *ResponseBuilder) WithSuccessCode(statusCode int) *ResponseBuilder {
 
 func (b *ResponseBuilder) WithError(err error) *ResponseBuilder {
 	b.Error = err
+	return b
+}
+
+func (b *ResponseBuilder) WithMessage(message string) *ResponseBuilder {
+	b.Message = message
 	return b
 }
 
@@ -58,5 +65,10 @@ func (b *ResponseBuilder) Send(c echo.Context) error {
 		sanitizedData = emptyMap
 	}
 
-	return c.JSON(b.SuccessCode, sanitizedData)
+	response := dtos.Response{
+		Message: b.Message,
+		Data:    sanitizedData,
+	}
+
+	return c.JSON(b.SuccessCode, response)
 }
