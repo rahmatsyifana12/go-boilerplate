@@ -7,5 +7,14 @@ import (
 type AuthClaims struct {
 	jwt.RegisteredClaims
 
-	UserID       string `json:"user_id"`
+	UserID       uint `json:"user_id"`
+}
+
+type LoginRequest struct {
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
+}
+
+type LoginResponse struct {
+	AccessToken string `json:"access_token"`
 }

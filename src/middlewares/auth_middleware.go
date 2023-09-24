@@ -15,7 +15,7 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		authHeaderList, ok := c.Request().Header["Authorization"]
 		if !ok || len(authHeaderList) == 0 {
 			err = responses.NewError().
-				WithError(constants.ErrNotLoggedIn).
+				WithError(constants.ERR_NOT_LOGGED_IN).
 				WithCode(http.StatusUnauthorized).
 				WithMessage("You don't have the permission.")
 			return
@@ -26,7 +26,7 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 		if !strings.HasPrefix(authHeader, bearerPrefix) {
 			err = responses.NewError().
-				WithError(constants.ErrNotLoggedIn).
+				WithError(constants.ERR_NOT_LOGGED_IN).
 				WithCode(http.StatusUnauthorized).
 				WithMessage("Invalid authorization header.")
 			return

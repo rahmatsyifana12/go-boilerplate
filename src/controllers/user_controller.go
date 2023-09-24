@@ -36,14 +36,14 @@ func (t *UserControllerImpl) CreateUser(c echo.Context) (err error) {
 		return responses.NewError().
 			WithError(err).
 			WithCode(http.StatusBadRequest).
-			WithMessage("failed to bind parameters")
+			WithMessage("Failed to bind parameters")
 	}
 
 	err = t.service.User.CreateUser(c, params)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusCreated).
-		WithMessage("successfully created a new user").
+		WithMessage("Successfully created a new user").
 		Send(c)
 }
 
@@ -66,7 +66,7 @@ func (t *UserControllerImpl) GetUserByID(c echo.Context) (err error) {
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusOK).
-		WithMessage("successfully retrieved a user").
+		WithMessage("Successfully retrieved a user").
 		WithData(data).
 		Send(c)
 }

@@ -13,6 +13,7 @@ type UserRepository interface {
 	CreateUser(c echo.Context, user models.User) error
 	GetUserByID(c echo.Context, userID uint) (models.User, error)
 	GetUserByUsername(c echo.Context, username string) (models.User, error)
+	UpdateUser(c echo.Context, user models.User) error
 }
 
 type UserRepositoryImpl struct {
@@ -36,7 +37,11 @@ func (r *UserRepositoryImpl) GetUserByID(c echo.Context, userID uint) (user mode
 }
 
 func (r *UserRepositoryImpl) GetUserByUsername(c echo.Context, username string) (user models.User, err error) {
-	// err = r.db.First(&user).Where("username = ?", username).WithContext(c.Request().Context()).Error
-	err = r.db.Select("id", "username").Where("username = ?", username).First(&user).WithContext(c.Request().Context()).Error
+	err = r.db.Where("username = ?", username).First(&user).WithContext(c.Request().Context()).Error
+	return
+}
+
+func (r *UserRepositoryImpl) UpdateUser(c echo.Context, user models.User) (err error) {
+	err = r.db.Save(&user).WithContext(c.Request().Context()).Error
 	return
 }

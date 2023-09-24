@@ -9,6 +9,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/sarulabs/di"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -41,11 +42,26 @@ func (s *UserServiceImpl) CreateUser(c echo.Context, createUserRequest dtos.Crea
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusBadRequest).
-			WithMessage("account with the same username already exists")
+			WithMessage("Account with the same username already exists")
 		return
 	}
 
-	err = s.repository.User.CreateUser(c, models.User{Username: createUserRequest.Username, Password: createUserRequest.Password})
+	passBytes := []byte(createUserRequest.Password)
+	hashedPassword, err := bcrypt.GenerateFromPassword(passBytes, bcrypt.DefaultCost)
+	if err != nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Failed to hash password")
+		return
+	}
+
+	newUser := models.User{
+		Username: createUserRequest.Username,
+		Password: string(hashedPassword),
+	}
+
+	err = s.repository.User.CreateUser(c, newUser)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
