@@ -14,6 +14,7 @@ import (
 
 type TodoService interface {
 	CreateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.CreateTodoRequest) error
+	GetTodoByID(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (dtos.GetTodoByIDResponse, error)
 }
 
 type TodoServiceImpl struct {
@@ -58,5 +59,34 @@ func (s *TodoServiceImpl) CreateTodo(c echo.Context, claims dtos.AuthClaims, par
 		return
 	}
 
+	return
+}
+
+func (s *TodoServiceImpl) GetTodoByID(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (data dtos.GetTodoByIDResponse, err error) {
+	todo, err := s.repository.Todo.GetTodoByID(c, params.ID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = responses.NewError().
+				WithError(err).
+				WithCode(http.StatusBadRequest).
+				WithMessage("Cannot find todo with the given id")
+			return
+		}
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Cannot find todo with the given id")
+		return
+	}
+
+	if todo.UserID != claims.UserID {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusUnauthorized).
+			WithMessage("You are not authorized to view this todo")
+		return
+	}
+
+	data.Todo = todo
 	return
 }

@@ -14,6 +14,7 @@ import (
 
 type TodoController interface {
 	CreateTodo(c echo.Context) error
+	GetTodoByID(c echo.Context) error	
 }
 
 type TodoControllerImpl struct {
@@ -51,5 +52,35 @@ func (t *TodoControllerImpl) CreateTodo(c echo.Context) (err error) {
 		WithError(err).
 		WithSuccessCode(http.StatusCreated).
 		WithMessage("Successfully created a new todo").
+		Send(c)
+}
+
+func (t *TodoControllerImpl) GetTodoByID(c echo.Context) error {
+	var (
+		params	dtos.TodoIDParams
+		err		error
+	)
+
+	if err = c.Bind(&params); err != nil {
+		return responses.NewError().
+			WithCode(http.StatusBadRequest).
+			WithError(err).
+			WithMessage("Failed to bind parameters")
+	}
+
+	claims, err := helpers.GetAuthClaims(c)
+	if err != nil {
+		return responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Failed to get auth claims")
+	}
+
+	data, err := t.service.Todo.GetTodoByID(c, claims, params)
+	return responses.New().
+		WithError(err).
+		WithSuccessCode(http.StatusOK).
+		WithMessage("Successfully retrieved a todo").
+		WithData(data).
 		Send(c)
 }

@@ -15,9 +15,9 @@ import (
 
 type UserService interface {
 	CreateUser(c echo.Context, params dtos.CreateUserRequest) error
-	GetUserByID(c echo.Context, claims dtos.AuthClaims, userID uint) (dtos.GetUserByIDResponse, error)
+	GetUserByID(c echo.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (dtos.GetUserByIDResponse, error)
 	UpdateUser(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateUserParams) error
-	DeleteUser(c echo.Context, claims dtos.AuthClaims, params dtos.DeleteUserParams) error
+	DeleteUser(c echo.Context, claims dtos.AuthClaims, params dtos.UserIDParams) error
 }
 
 type UserServiceImpl struct {
@@ -75,8 +75,8 @@ func (s *UserServiceImpl) CreateUser(c echo.Context, params dtos.CreateUserReque
 	return
 }
 
-func (s *UserServiceImpl) GetUserByID(c echo.Context, claims dtos.AuthClaims, userID uint) (data dtos.GetUserByIDResponse, err error) {
-	user, err := s.repository.User.GetUserByID(c, userID)
+func (s *UserServiceImpl) GetUserByID(c echo.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (data dtos.GetUserByIDResponse, err error) {
+	user, err := s.repository.User.GetUserByID(c, params.ID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = responses.NewError().
@@ -105,7 +105,7 @@ func (s *UserServiceImpl) GetUserByID(c echo.Context, claims dtos.AuthClaims, us
 }
 
 func (s *UserServiceImpl) UpdateUser(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateUserParams) (err error) {
-	user, err := s.repository.User.GetUserByID(c, params.UserID)
+	user, err := s.repository.User.GetUserByID(c, params.ID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = responses.NewError().
@@ -144,8 +144,8 @@ func (s *UserServiceImpl) UpdateUser(c echo.Context, claims dtos.AuthClaims, par
 	return
 }
 
-func (s *UserServiceImpl) DeleteUser(c echo.Context, claims dtos.AuthClaims, params dtos.DeleteUserParams) (err error) {
-	user, err := s.repository.User.GetUserByID(c, params.UserID)
+func (s *UserServiceImpl) DeleteUser(c echo.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (err error) {
+	user, err := s.repository.User.GetUserByID(c, params.ID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = responses.NewError().

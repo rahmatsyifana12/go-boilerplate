@@ -16,7 +16,7 @@ type UserController interface {
 	CreateUser(c echo.Context) error
 	GetUserByID(c echo.Context) error
 	UpdateUser(c echo.Context) error
-	DeleteUser (c echo.Context) error
+	DeleteUser(c echo.Context) error
 }
 
 type UserControllerImpl struct {
@@ -51,7 +51,7 @@ func (t *UserControllerImpl) CreateUser(c echo.Context) (err error) {
 
 func (t *UserControllerImpl) GetUserByID(c echo.Context) error {
 	var (
-		params	dtos.GetUserByIDParams
+		params	dtos.UserIDParams
 		err		error
 	)
 
@@ -70,7 +70,7 @@ func (t *UserControllerImpl) GetUserByID(c echo.Context) error {
 			WithMessage("Failed to get auth claims")
 	}
 
-	data, err := t.service.User.GetUserByID(c, claims, params.UserID)
+	data, err := t.service.User.GetUserByID(c, claims, params)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusOK).
@@ -110,7 +110,7 @@ func (t *UserControllerImpl) UpdateUser(c echo.Context) error {
 
 func (t *UserControllerImpl) DeleteUser (c echo.Context) error {
 	var (
-		params	dtos.DeleteUserParams
+		params	dtos.UserIDParams
 		err		error
 	)
 

@@ -39,9 +39,9 @@ func (r *Route) Test() {
 func (r *Route) User() {
 	user := r.router.Group("users")
 	user.POST("/", r.controller.User.CreateUser)
-	user.GET("/:user_id", r.controller.User.GetUserByID, middlewares.AuthMiddleware)
-	user.PATCH("/:user_id", r.controller.User.UpdateUser, middlewares.AuthMiddleware)
-	user.DELETE("/:user_id", r.controller.User.DeleteUser, middlewares.AuthMiddleware)
+	user.GET("/:id", r.controller.User.GetUserByID, middlewares.AuthMiddleware)
+	user.PATCH("/:id", r.controller.User.UpdateUser, middlewares.AuthMiddleware)
+	user.DELETE("/:id", r.controller.User.DeleteUser, middlewares.AuthMiddleware)
 }
 
 func (r *Route) Auth() {
@@ -53,4 +53,5 @@ func (r *Route) Auth() {
 func (r *Route) Todo() {
 	todo := r.router.Group("todos")
 	todo.POST("/", r.controller.Todo.CreateTodo, middlewares.AuthMiddleware)
+	todo.GET("/:id", r.controller.Todo.GetTodoByID, middlewares.AuthMiddleware)
 }
