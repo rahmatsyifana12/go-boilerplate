@@ -1,3 +1,0 @@
-ALTER TABLE users
-ADD COLUMN phone_number VARCHAR(20),
-ADD COLUMN full_name VARCHAR(255);
