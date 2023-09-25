@@ -14,7 +14,8 @@ import (
 
 type TodoController interface {
 	CreateTodo(c echo.Context) error
-	GetTodoByID(c echo.Context) error	
+	GetTodoByID(c echo.Context) error
+	GetTodos(c echo.Context) error
 }
 
 type TodoControllerImpl struct {
@@ -81,6 +82,24 @@ func (t *TodoControllerImpl) GetTodoByID(c echo.Context) error {
 		WithError(err).
 		WithSuccessCode(http.StatusOK).
 		WithMessage("Successfully retrieved a todo").
+		WithData(data).
+		Send(c)
+}
+
+func (t *TodoControllerImpl) GetTodos(c echo.Context) error {
+	claims, err := helpers.GetAuthClaims(c)
+	if err != nil {
+		return responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Failed to get auth claims")
+	}
+
+	data, err := t.service.Todo.GetTodos(c, claims)
+	return responses.New().
+		WithError(err).
+		WithSuccessCode(http.StatusOK).
+		WithMessage("Successfully retrieved todos").
 		WithData(data).
 		Send(c)
 }

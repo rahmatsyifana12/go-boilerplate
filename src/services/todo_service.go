@@ -15,6 +15,7 @@ import (
 type TodoService interface {
 	CreateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.CreateTodoRequest) error
 	GetTodoByID(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (dtos.GetTodoByIDResponse, error)
+	GetTodos(c echo.Context, claims dtos.AuthClaims) (dtos.GetTodosResponse, error)
 }
 
 type TodoServiceImpl struct {
@@ -88,5 +89,19 @@ func (s *TodoServiceImpl) GetTodoByID(c echo.Context, claims dtos.AuthClaims, pa
 	}
 
 	data.Todo = todo
+	return
+}
+
+func (s *TodoServiceImpl) GetTodos(c echo.Context, claims dtos.AuthClaims) (data dtos.GetTodosResponse, err error) {
+	todos, err := s.repository.Todo.GetTodosByUserID(c, claims.UserID)
+	if err != nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Error while retrieving todos from database")
+		return
+	}
+
+	data.Todos = todos
 	return
 }

@@ -61,6 +61,8 @@ func (s *UserServiceImpl) CreateUser(c echo.Context, params dtos.CreateUserReque
 	newUser := models.User{
 		Username: params.Username,
 		Password: string(hashedPassword),
+		FullName: params.FullName,
+		PhoneNumber: params.PhoneNumber,
 	}
 
 	err = s.repository.User.CreateUser(c, newUser)

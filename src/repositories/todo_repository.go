@@ -12,6 +12,7 @@ import (
 type TodoRepository interface {
 	CreateTodo(c echo.Context, todo models.Todo) error
 	GetTodoByID(c echo.Context, todoID uint) (todo models.Todo, err error)
+	GetTodosByUserID(c echo.Context, userID uint) (todos []models.Todo, err error)
 }
 
 type TodoRepositoryImpl struct {
@@ -31,5 +32,10 @@ func (r *TodoRepositoryImpl) CreateTodo(c echo.Context, todo models.Todo) error 
 
 func (r *TodoRepositoryImpl) GetTodoByID(c echo.Context, todoID uint) (todo models.Todo, err error) {
 	err = r.db.Where("id = ?", todoID).First(&todo).WithContext(c.Request().Context()).Error
+	return
+}
+
+func (r *TodoRepositoryImpl) GetTodosByUserID(c echo.Context, userID uint) (todos []models.Todo, err error) {
+	err = r.db.Where("user_id = ?", userID).Find(&todos).WithContext(c.Request().Context()).Error
 	return
 }

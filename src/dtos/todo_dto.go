@@ -3,7 +3,11 @@ package dtos
 import "go-boilerplate/src/models"
 
 type GetTodoByIDResponse struct {
-	models.Todo
+	Todo models.Todo
+}
+
+type GetTodosResponse struct {
+	Todos []models.Todo
 }
 
 type CreateTodoRequest struct {
