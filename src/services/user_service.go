@@ -28,29 +28,32 @@ func NewUserService(ioc di.Container) *UserServiceImpl {
 	}
 }
 
-func (s *UserServiceImpl) CreateUser(c echo.Context, createUserRequest dtos.CreateUserRequest) error {
+func (s *UserServiceImpl) CreateUser(c echo.Context, createUserRequest dtos.CreateUserRequest) (err error) {
 	user, err := s.repository.User.GetUserByUsername(c, createUserRequest.Username)
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return responses.NewError().
+		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
 			WithMessage(err.Error())
+		return
 	}
 
 	if user.ID != 0 {
-		return responses.NewError().
+		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusBadRequest).
 			WithMessage("Account with the same username already exists")
+		return
 	}
 
 	passBytes := []byte(createUserRequest.Password)
 	hashedPassword, err := bcrypt.GenerateFromPassword(passBytes, bcrypt.DefaultCost)
 	if err != nil {
-		return responses.NewError().
+		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
 			WithMessage("Failed to hash password")
+		return
 	}
 
 	newUser := models.User{
@@ -60,26 +63,26 @@ func (s *UserServiceImpl) CreateUser(c echo.Context, createUserRequest dtos.Crea
 
 	err = s.repository.User.CreateUser(c, newUser)
 	if err != nil {
-		return responses.NewError().
+		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
 			WithMessage(err.Error())
+		return
 	}
 
-	return nil
+	return
 }
 
-func (s *UserServiceImpl) GetUserByID(c echo.Context, userID uint) (dtos.GetUserByIDResponse, error) {
-	data  := dtos.GetUserByIDResponse{}
-
+func (s *UserServiceImpl) GetUserByID(c echo.Context, userID uint) (data dtos.GetUserByIDResponse, err error) {
 	user, err := s.repository.User.GetUserByID(c, userID)
 	if err != nil {
-		return data, responses.NewError().
+		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
 			WithMessage("Cannot find user with the given id")
+		return
 	}
 
 	data.User = user
-	return data, nil
+	return
 }

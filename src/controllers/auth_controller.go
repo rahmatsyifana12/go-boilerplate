@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/dtos"
 	"go-boilerplate/src/pkg/helpers"
@@ -28,10 +27,9 @@ func NewAuthController(ioc di.Container) *AuthControllerImpl {
 	}
 }
 
-func (a *AuthControllerImpl) Login(c echo.Context) error {
+func (a *AuthControllerImpl) Login(c echo.Context) (err error) {
 	var (
 		params	dtos.LoginRequest
-		err		error
 	)
 
 	if err = c.Bind(&params); err != nil {
@@ -50,13 +48,7 @@ func (a *AuthControllerImpl) Login(c echo.Context) error {
 		Send(c)
 }
 
-func (a *AuthControllerImpl) Logout(c echo.Context) error {
-	var (
-		err error
-	)
-
-	fmt.Println("testing2")
-
+func (a *AuthControllerImpl) Logout(c echo.Context) (err error) {
 	authClaims, err := helpers.GetAuthClaims(c)
 	if err != nil {
 		return responses.NewError().

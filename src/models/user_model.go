@@ -8,7 +8,7 @@ type User struct {
 	gorm.Model
 
 	Username    string  `json:"username"`
-	Password    string  `json:"password"`
+	Password    string  `json:"-"`
 	AccessToken string  `json:"access_token"`
     Todos       []Todo
 }

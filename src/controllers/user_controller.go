@@ -26,10 +26,9 @@ func NewUserController(ioc di.Container) *UserControllerImpl {
     }
 }
 
-func (t *UserControllerImpl) CreateUser(c echo.Context) error {
+func (t *UserControllerImpl) CreateUser(c echo.Context) (err error) {
 	var (
 		params	dtos.CreateUserRequest
-		err		error
 	)
 
     if err = c.Bind(&params); err != nil {
