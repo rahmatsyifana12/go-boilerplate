@@ -17,6 +17,7 @@ type UserService interface {
 	CreateUser(c echo.Context, params dtos.CreateUserRequest) error
 	GetUserByID(c echo.Context, claims dtos.AuthClaims, userID uint) (dtos.GetUserByIDResponse, error)
 	UpdateUser(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateUserParams) error
+	DeleteUser(c echo.Context, claims dtos.AuthClaims, params dtos.DeleteUserParams) error
 }
 
 type UserServiceImpl struct {
@@ -137,6 +138,43 @@ func (s *UserServiceImpl) UpdateUser(c echo.Context, claims dtos.AuthClaims, par
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
 			WithMessage("Cannot update user")
+		return
+	}
+
+	return
+}
+
+func (s *UserServiceImpl) DeleteUser(c echo.Context, claims dtos.AuthClaims, params dtos.DeleteUserParams) (err error) {
+	user, err := s.repository.User.GetUserByID(c, params.UserID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = responses.NewError().
+				WithError(err).
+				WithCode(http.StatusBadRequest).
+				WithMessage("Cannot find user with the given id")
+			return
+		}
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Cannot find user with the given id")
+		return
+	}
+
+	if user.ID != claims.UserID {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusUnauthorized).
+			WithMessage("You are not authorized to delete this user")
+		return
+	}
+
+	err = s.repository.User.DeleteUser(c, user)
+	if err != nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Cannot delete user")
 		return
 	}
 

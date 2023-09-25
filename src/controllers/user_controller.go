@@ -16,6 +16,7 @@ type UserController interface {
 	CreateUser(c echo.Context) error
 	GetUserByID(c echo.Context) error
 	UpdateUser(c echo.Context) error
+	DeleteUser (c echo.Context) error
 }
 
 type UserControllerImpl struct {
@@ -104,5 +105,34 @@ func (t *UserControllerImpl) UpdateUser(c echo.Context) error {
 		WithError(err).
 		WithSuccessCode(http.StatusOK).
 		WithMessage("Successfully updated a user").
+		Send(c)
+}
+
+func (t *UserControllerImpl) DeleteUser (c echo.Context) error {
+	var (
+		params	dtos.DeleteUserParams
+		err		error
+	)
+
+	if err = c.Bind(&params); err != nil {
+		return responses.NewError().
+			WithCode(http.StatusBadRequest).
+			WithError(err).
+			WithMessage("Failed to bind parameters")
+	}
+
+	claims, err := helpers.GetAuthClaims(c)
+	if err != nil {
+		return responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Failed to get auth claims")
+	}
+
+	err = t.service.User.DeleteUser(c, claims, params)
+	return responses.New().
+		WithError(err).
+		WithSuccessCode(http.StatusOK).
+		WithMessage("Successfully deleted a user").
 		Send(c)
 }

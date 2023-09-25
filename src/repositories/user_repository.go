@@ -14,6 +14,7 @@ type UserRepository interface {
 	GetUserByID(c echo.Context, userID uint) (models.User, error)
 	GetUserByUsername(c echo.Context, username string) (models.User, error)
 	UpdateUser(c echo.Context, user models.User) error
+	DeleteUser(c echo.Context, user models.User) error
 }
 
 type UserRepositoryImpl struct {
@@ -43,5 +44,10 @@ func (r *UserRepositoryImpl) GetUserByUsername(c echo.Context, username string) 
 
 func (r *UserRepositoryImpl) UpdateUser(c echo.Context, user models.User) (err error) {
 	err = r.db.Save(&user).WithContext(c.Request().Context()).Error
+	return
+}
+
+func (r *UserRepositoryImpl) DeleteUser(c echo.Context, user models.User) (err error) {
+	err = r.db.Delete(&user).WithContext(c.Request().Context()).Error
 	return
 }

@@ -20,3 +20,7 @@ type UpdateUserParams struct {
 	FullName	string	`json:"full_name"`
 	PhoneNumber	string	`json:"phone_number"`
 }
+
+type DeleteUserParams struct {
+	UserID uint `param:"user_id" validate:"required"`
+}

@@ -40,6 +40,7 @@ func (r *Route) User() {
 	user.POST("/create", r.controller.User.CreateUser)
 	user.GET("/:user_id", r.controller.User.GetUserByID, middlewares.AuthMiddleware)
 	user.PATCH("/:user_id", r.controller.User.UpdateUser, middlewares.AuthMiddleware)
+	user.DELETE("/:user_id", r.controller.User.DeleteUser, middlewares.AuthMiddleware)
 }
 
 func (r *Route) Auth() {
