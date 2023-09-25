@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"fmt"
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/pkg/helpers"
 	"go-boilerplate/src/pkg/responses"
@@ -11,35 +12,39 @@ import (
 )
 
 func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) (err error) {
+	return func(c echo.Context) error {
 		authHeaderList, ok := c.Request().Header["Authorization"]
 		if !ok || len(authHeaderList) == 0 {
-			err = responses.NewError().
+			return responses.NewError().
 				WithError(constants.ERR_NOT_LOGGED_IN).
 				WithCode(http.StatusUnauthorized).
 				WithMessage("You don't have the permission.")
-			return
 		}
 
 		authHeader := authHeaderList[0]
 		bearerPrefix := "Bearer "
 
 		if !strings.HasPrefix(authHeader, bearerPrefix) {
-			err = responses.NewError().
+			return responses.NewError().
 				WithError(constants.ERR_NOT_LOGGED_IN).
 				WithCode(http.StatusUnauthorized).
 				WithMessage("Invalid authorization header.")
-			return
 		}
 
 		token := strings.Replace(authHeader, bearerPrefix, "", 1)
 		claims, err := helpers.ParseAndValidateJWT(token)
 		if err != nil {
-			return
+			fmt.Println(err.Error())
+			return responses.NewError().
+				WithError(err).
+				WithCode(http.StatusUnauthorized).
+				WithMessage("Invalid authorization header.")
 		}
 
 		c.Set(constants.AuthClaimsKey, claims)
+		c.Set(constants.AccessToken, token)
+
 		err = next(c)
-		return
+		return err
 	}
 }

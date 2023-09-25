@@ -3,6 +3,7 @@ package main
 import (
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/controllers"
+	"go-boilerplate/src/middlewares"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sarulabs/di"
@@ -41,6 +42,7 @@ func (r *Route) User() {
 }
 
 func (r *Route) Auth() {
-	auth := r.router.Group("auths")
+	auth := r.router.Group("auth")
 	auth.POST("/login", r.controller.Auth.Login)
+	auth.POST("/logout", r.controller.Auth.Logout, middlewares.AuthMiddleware)
 }

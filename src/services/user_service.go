@@ -28,32 +28,29 @@ func NewUserService(ioc di.Container) *UserServiceImpl {
 	}
 }
 
-func (s *UserServiceImpl) CreateUser(c echo.Context, createUserRequest dtos.CreateUserRequest) (err error) {
+func (s *UserServiceImpl) CreateUser(c echo.Context, createUserRequest dtos.CreateUserRequest) error {
 	user, err := s.repository.User.GetUserByUsername(c, createUserRequest.Username)
 	if err != nil && err != gorm.ErrRecordNotFound {
-		err = responses.NewError().
+		return responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
 			WithMessage(err.Error())
-		return
 	}
 
 	if user.ID != 0 {
-		err = responses.NewError().
+		return responses.NewError().
 			WithError(err).
 			WithCode(http.StatusBadRequest).
 			WithMessage("Account with the same username already exists")
-		return
 	}
 
 	passBytes := []byte(createUserRequest.Password)
 	hashedPassword, err := bcrypt.GenerateFromPassword(passBytes, bcrypt.DefaultCost)
 	if err != nil {
-		err = responses.NewError().
+		return responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
 			WithMessage("Failed to hash password")
-		return
 	}
 
 	newUser := models.User{
@@ -63,28 +60,26 @@ func (s *UserServiceImpl) CreateUser(c echo.Context, createUserRequest dtos.Crea
 
 	err = s.repository.User.CreateUser(c, newUser)
 	if err != nil {
-		err = responses.NewError().
+		return responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
 			WithMessage(err.Error())
-		return
 	}
 
-	return
+	return nil
 }
 
-func (s *UserServiceImpl) GetUserByID(c echo.Context, userID uint) (data dtos.GetUserByIDResponse, err error) {
-	data  = dtos.GetUserByIDResponse{}
+func (s *UserServiceImpl) GetUserByID(c echo.Context, userID uint) (dtos.GetUserByIDResponse, error) {
+	data  := dtos.GetUserByIDResponse{}
 
 	user, err := s.repository.User.GetUserByID(c, userID)
 	if err != nil {
-		err = responses.NewError().
+		return data, responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
 			WithMessage("Cannot find user with the given id")
-		return
 	}
 
 	data.User = user
-	return
+	return data, nil
 }

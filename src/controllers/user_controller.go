@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/dtos"
 	"go-boilerplate/src/pkg/responses"
@@ -27,9 +26,10 @@ func NewUserController(ioc di.Container) *UserControllerImpl {
     }
 }
 
-func (t *UserControllerImpl) CreateUser(c echo.Context) (err error) {
+func (t *UserControllerImpl) CreateUser(c echo.Context) error {
 	var (
 		params	dtos.CreateUserRequest
+		err		error
 	)
 
     if err = c.Bind(&params); err != nil {
@@ -47,20 +47,18 @@ func (t *UserControllerImpl) CreateUser(c echo.Context) (err error) {
 		Send(c)
 }
 
-func (t *UserControllerImpl) GetUserByID(c echo.Context) (err error) {
+func (t *UserControllerImpl) GetUserByID(c echo.Context) error {
 	var (
 		params	dtos.GetUserByIDParams
+		err		error
 	)
 
 	if err = c.Bind(&params); err != nil {
-		err = responses.NewError().
+		return responses.NewError().
 			WithCode(http.StatusBadRequest).
 			WithError(err).
 			WithMessage("Failed to bind parameters")
-		return
 	}
-
-	fmt.Println(params)
 
 	data, err := t.service.User.GetUserByID(c, params.UserID)
 	return responses.New().

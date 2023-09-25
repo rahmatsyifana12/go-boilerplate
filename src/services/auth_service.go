@@ -17,7 +17,8 @@ import (
 )
 
 type AuthService interface {
-	Login(c echo.Context, params dtos.LoginRequest) (res dtos.LoginResponse, err error)
+	Login(c echo.Context, params dtos.LoginRequest) (dtos.LoginResponse, error)
+	Logout(c echo.Context, authClaims dtos.AuthClaims) error
 }
 
 type AuthServiceImpl struct {
@@ -30,30 +31,31 @@ func NewAuthService(ioc di.Container) *AuthServiceImpl {
 	}
 }
 
-func (s *AuthServiceImpl) Login(c echo.Context, params dtos.LoginRequest) (res dtos.LoginResponse, err error) {
+func (s *AuthServiceImpl) Login(c echo.Context, params dtos.LoginRequest) (dtos.LoginResponse, error) {
+	var (
+		res	dtos.LoginResponse
+		err	error
+	)
 	user, err := s.repository.User.GetUserByUsername(c, params.Username)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			err = responses.NewError().
+			return res, responses.NewError().
 				WithError(err).
 				WithCode(http.StatusBadRequest).
 				WithMessage("Cannot find user with the given username")
-			return
 		}
-		err = responses.NewError().
+		return res, responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
 			WithMessage("Error while retrieving user from database")
-		return
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(params.Password))
 	if err != nil {
-		err = responses.NewError().
+		return res, responses.NewError().
 			WithError(err).
 			WithCode(http.StatusBadRequest).
 			WithMessage("Incorrect password")
-		return
 	}
 
 	tokenExpireDuration := (time.Hour * 24)
@@ -67,24 +69,50 @@ func (s *AuthServiceImpl) Login(c echo.Context, params dtos.LoginRequest) (res d
 		},
 	})
 	if err != nil {
-		err = responses.NewError().
+		return res, responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
 			WithMessage("Error while generating JWT")
-		return
 	}
 
 	user.AccessToken = token
 
 	err = s.repository.User.UpdateUser(c, user)
 	if err != nil {
-		err = responses.NewError().
+		return res, responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
-			WithMessage("Error while storing users access token into database")
-		return
+			WithMessage("Error while updating users access token into database")
 	}
 
 	res.AccessToken = token
-	return
+	return res, nil
+}
+
+func (s *AuthServiceImpl) Logout(c echo.Context, authClaims dtos.AuthClaims) error {
+	user, err := s.repository.User.GetUserByID(c, authClaims.UserID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return responses.NewError().
+				WithError(err).
+				WithCode(http.StatusBadRequest).
+				WithMessage("Cannot find user with the given id")
+		}
+		return responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Error while retrieving user from database")
+	}
+
+	user.AccessToken = ""
+
+	err = s.repository.User.UpdateUser(c, user)
+	if err != nil {
+		return responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Error while updating users access token into database")
+	}
+
+	return nil
 }
