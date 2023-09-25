@@ -26,7 +26,7 @@ func ParseAndValidateJWT(token string) (claims dtos.AuthClaims, err error) {
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 	if err != nil {
-		err = errors.New("failed to validate token")
+		return
 	}
 
 	return

@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"fmt"
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/pkg/helpers"
 	"go-boilerplate/src/pkg/responses"
@@ -34,7 +33,6 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		token := strings.Replace(authHeader, bearerPrefix, "", 1)
 		claims, err := helpers.ParseAndValidateJWT(token)
 		if err != nil {
-			fmt.Println(err.Error())
 			return responses.NewError().
 				WithError(err).
 				WithCode(http.StatusUnauthorized).
