@@ -27,6 +27,7 @@ func (r *Route) Init() {
 	r.Test()
 	r.Auth()
 	r.User()
+	r.Todo()
 }
 
 func (r *Route) Test() {

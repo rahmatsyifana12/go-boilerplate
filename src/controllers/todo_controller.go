@@ -12,24 +12,23 @@ import (
 	"github.com/sarulabs/di"
 )
 
-type AuthController interface {
-	Login(c echo.Context) error
-	Logout(c echo.Context) error
+type TodoController interface {
+	CreateTodo(c echo.Context) error
 }
 
-type AuthControllerImpl struct {
+type TodoControllerImpl struct {
 	service	*services.Service
 }
 
-func NewAuthController(ioc di.Container) *AuthControllerImpl {
-	return &AuthControllerImpl{
+func NewTodoController(ioc di.Container) *TodoControllerImpl {
+	return &TodoControllerImpl{
 		service: ioc.Get(constants.SERVICE).(*services.Service),
 	}
 }
 
-func (t *AuthControllerImpl) Login(c echo.Context) (err error) {
+func (t *TodoControllerImpl) CreateTodo(c echo.Context) (err error) {
 	var (
-		params	dtos.LoginRequest
+		params	dtos.CreateTodoRequest
 	)
 
 	if err = c.Bind(&params); err != nil {
@@ -39,17 +38,7 @@ func (t *AuthControllerImpl) Login(c echo.Context) (err error) {
 			WithMessage("Failed to bind parameters")
 	}
 
-	res, err := t.service.Auth.Login(c, params)
-	return responses.New().
-		WithError(err).
-		WithSuccessCode(http.StatusOK).
-		WithMessage("Successfully logged in").
-		WithData(res).
-		Send(c)
-}
-
-func (t *AuthControllerImpl) Logout(c echo.Context) (err error) {
-	authClaims, err := helpers.GetAuthClaims(c)
+	claims, err := helpers.GetAuthClaims(c)
 	if err != nil {
 		return responses.NewError().
 			WithError(err).
@@ -57,10 +46,10 @@ func (t *AuthControllerImpl) Logout(c echo.Context) (err error) {
 			WithMessage("Failed to get auth claims")
 	}
 
-	err = t.service.Auth.Logout(c,  authClaims)
+	err = t.service.Todo.CreateTodo(c, claims, params)
 	return responses.New().
 		WithError(err).
-		WithSuccessCode(http.StatusOK).
-		WithMessage("Successfully logged out").
+		WithSuccessCode(http.StatusCreated).
+		WithMessage("Successfully created a new todo").
 		Send(c)
 }

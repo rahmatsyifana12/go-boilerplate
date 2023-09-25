@@ -68,7 +68,7 @@ func (s *UserServiceImpl) CreateUser(c echo.Context, params dtos.CreateUserReque
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
-			WithMessage(err.Error())
+			WithMessage("Error while creating user into database")
 		return
 	}
 

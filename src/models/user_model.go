@@ -12,5 +12,5 @@ type User struct {
 	FullName    string  `json:"full_name"`
 	PhoneNumber string  `json:"phone_number"`
 	AccessToken string  `json:"access_token"`
-    Todos       []Todo
+    Todos       []Todo	`json:"todos,omitempty"`
 }
