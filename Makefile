@@ -35,3 +35,7 @@ migration-down:
 migration-create:
 	@read -p "Enter the migration name: " MIGRATION_NAME; \
 	migrate create -ext sql -dir $(MIGRATION_DIR) $$MIGRATION_NAME
+
+.PHONY: migration-down-1
+migration-down-1:
+	migrate -database ${DBMATE_URL} -path migrations down 1

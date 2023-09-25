@@ -3,6 +3,7 @@ package controllers
 import (
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/dtos"
+	"go-boilerplate/src/pkg/helpers"
 	"go-boilerplate/src/pkg/responses"
 	"go-boilerplate/src/services"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 type UserController interface {
 	CreateUser(c echo.Context) error
 	GetUserByID(c echo.Context) error
+	UpdateUser(c echo.Context) error
 }
 
 type UserControllerImpl struct {
@@ -59,11 +61,48 @@ func (t *UserControllerImpl) GetUserByID(c echo.Context) error {
 			WithMessage("Failed to bind parameters")
 	}
 
-	data, err := t.service.User.GetUserByID(c, params.UserID)
+	claims, err := helpers.GetAuthClaims(c)
+	if err != nil {
+		return responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Failed to get auth claims")
+	}
+
+	data, err := t.service.User.GetUserByID(c, claims, params.UserID)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusOK).
 		WithMessage("Successfully retrieved a user").
 		WithData(data).
+		Send(c)
+}
+
+func (t *UserControllerImpl) UpdateUser(c echo.Context) error {
+	var (
+		params	dtos.UpdateUserParams
+		err		error
+	)
+
+	if err = c.Bind(&params); err != nil {
+		return responses.NewError().
+			WithCode(http.StatusBadRequest).
+			WithError(err).
+			WithMessage("Failed to bind parameters")
+	}
+
+	claims, err := helpers.GetAuthClaims(c)
+	if err != nil {
+		return responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Failed to get auth claims")
+	}
+
+	err = t.service.User.UpdateUser(c, claims, params)
+	return responses.New().
+		WithError(err).
+		WithSuccessCode(http.StatusOK).
+		WithMessage("Successfully updated a user").
 		Send(c)
 }

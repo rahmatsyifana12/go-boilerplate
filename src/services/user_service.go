@@ -14,8 +14,9 @@ import (
 )
 
 type UserService interface {
-	CreateUser(c echo.Context, createUserRequest dtos.CreateUserRequest) error
-	GetUserByID(c echo.Context, userID uint) (dtos.GetUserByIDResponse, error)
+	CreateUser(c echo.Context, params dtos.CreateUserRequest) error
+	GetUserByID(c echo.Context, claims dtos.AuthClaims, userID uint) (dtos.GetUserByIDResponse, error)
+	UpdateUser(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateUserParams) error
 }
 
 type UserServiceImpl struct {
@@ -28,8 +29,8 @@ func NewUserService(ioc di.Container) *UserServiceImpl {
 	}
 }
 
-func (s *UserServiceImpl) CreateUser(c echo.Context, createUserRequest dtos.CreateUserRequest) (err error) {
-	user, err := s.repository.User.GetUserByUsername(c, createUserRequest.Username)
+func (s *UserServiceImpl) CreateUser(c echo.Context, params dtos.CreateUserRequest) (err error) {
+	user, err := s.repository.User.GetUserByUsername(c, params.Username)
 	if err != nil && err != gorm.ErrRecordNotFound {
 		err = responses.NewError().
 			WithError(err).
@@ -46,7 +47,7 @@ func (s *UserServiceImpl) CreateUser(c echo.Context, createUserRequest dtos.Crea
 		return
 	}
 
-	passBytes := []byte(createUserRequest.Password)
+	passBytes := []byte(params.Password)
 	hashedPassword, err := bcrypt.GenerateFromPassword(passBytes, bcrypt.DefaultCost)
 	if err != nil {
 		err = responses.NewError().
@@ -57,7 +58,7 @@ func (s *UserServiceImpl) CreateUser(c echo.Context, createUserRequest dtos.Crea
 	}
 
 	newUser := models.User{
-		Username: createUserRequest.Username,
+		Username: params.Username,
 		Password: string(hashedPassword),
 	}
 
@@ -73,9 +74,16 @@ func (s *UserServiceImpl) CreateUser(c echo.Context, createUserRequest dtos.Crea
 	return
 }
 
-func (s *UserServiceImpl) GetUserByID(c echo.Context, userID uint) (data dtos.GetUserByIDResponse, err error) {
+func (s *UserServiceImpl) GetUserByID(c echo.Context, claims dtos.AuthClaims, userID uint) (data dtos.GetUserByIDResponse, err error) {
 	user, err := s.repository.User.GetUserByID(c, userID)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = responses.NewError().
+				WithError(err).
+				WithCode(http.StatusBadRequest).
+				WithMessage("Cannot find user with the given id")
+			return
+		}
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
@@ -83,6 +91,54 @@ func (s *UserServiceImpl) GetUserByID(c echo.Context, userID uint) (data dtos.Ge
 		return
 	}
 
+	if user.ID != claims.UserID {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusUnauthorized).
+			WithMessage("You are not authorized to view this user")
+		return
+	}
+
 	data.User = user
+	return
+}
+
+func (s *UserServiceImpl) UpdateUser(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateUserParams) (err error) {
+	user, err := s.repository.User.GetUserByID(c, params.UserID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = responses.NewError().
+				WithError(err).
+				WithCode(http.StatusBadRequest).
+				WithMessage("Cannot find user with the given id")
+			return
+		}
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Cannot find user with the given id")
+		return
+	}
+	
+	if user.ID != claims.UserID {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusUnauthorized).
+			WithMessage("You are not authorized to update this user")
+		return
+	}
+
+	user.FullName = params.FullName
+	user.PhoneNumber = params.PhoneNumber
+
+	err = s.repository.User.UpdateUser(c, user)
+	if err != nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Cannot update user")
+		return
+	}
+
 	return
 }
