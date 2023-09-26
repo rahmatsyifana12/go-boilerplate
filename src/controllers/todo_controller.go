@@ -17,6 +17,7 @@ type TodoController interface {
 	GetTodoByID(c echo.Context) error
 	GetTodos(c echo.Context) error
 	UpdateTodo(c echo.Context) error
+	DeleteTodo(c echo.Context) error
 }
 
 type TodoControllerImpl struct {
@@ -131,5 +132,34 @@ func (t *TodoControllerImpl) UpdateTodo(c echo.Context) error {
 		WithError(err).
 		WithSuccessCode(http.StatusOK).
 		WithMessage("Successfully updated a todo").
+		Send(c)
+}
+
+func (t *TodoControllerImpl) DeleteTodo(c echo.Context) error {
+	var (
+		params	dtos.TodoIDParams
+		err		error
+	)
+
+	if err = c.Bind(&params); err != nil {
+		return responses.NewError().
+			WithCode(http.StatusBadRequest).
+			WithError(err).
+			WithMessage("Failed to bind parameters")
+	}
+
+	claims, err := helpers.GetAuthClaims(c)
+	if err != nil {
+		return responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Failed to get auth claims")
+	}
+
+	err = t.service.Todo.DeleteTodo(c, claims, params)
+	return responses.New().
+		WithError(err).
+		WithSuccessCode(http.StatusOK).
+		WithMessage("Successfully deleted a todo").
 		Send(c)
 }

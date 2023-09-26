@@ -14,6 +14,7 @@ type TodoRepository interface {
 	GetTodoByID(c echo.Context, todoID uint) (todo models.Todo, err error)
 	GetTodosByUserID(c echo.Context, userID uint) (todos []models.Todo, err error)
 	UpdateTodo(c echo.Context, todo models.Todo) error
+	DeleteTodo(c echo.Context, todo models.Todo) error
 }
 
 type TodoRepositoryImpl struct {
@@ -43,5 +44,10 @@ func (r *TodoRepositoryImpl) GetTodosByUserID(c echo.Context, userID uint) (todo
 
 func (r *TodoRepositoryImpl) UpdateTodo(c echo.Context, todo models.Todo) error {
 	err := r.db.Save(&todo).WithContext(c.Request().Context()).Error
+	return err
+}
+
+func (r *TodoRepositoryImpl) DeleteTodo(c echo.Context, todo models.Todo) error {
+	err := r.db.Delete(&todo).WithContext(c.Request().Context()).Error
 	return err
 }

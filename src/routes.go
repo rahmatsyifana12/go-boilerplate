@@ -56,4 +56,5 @@ func (r *Route) Todo() {
 	todo.GET("/:id", r.controller.Todo.GetTodoByID, middlewares.AuthMiddleware)
 	todo.GET("/", r.controller.Todo.GetTodos, middlewares.AuthMiddleware)
 	todo.PATCH("/:id", r.controller.Todo.UpdateTodo, middlewares.AuthMiddleware)
+	todo.DELETE("/:id", r.controller.Todo.DeleteTodo, middlewares.AuthMiddleware)
 }

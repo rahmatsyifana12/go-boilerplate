@@ -17,6 +17,7 @@ type TodoService interface {
 	GetTodoByID(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (dtos.GetTodoByIDResponse, error)
 	GetTodos(c echo.Context, claims dtos.AuthClaims) (dtos.GetTodosResponse, error)
 	UpdateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateTodoParams) error
+	DeleteTodo(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) error
 }
 
 type TodoServiceImpl struct {
@@ -141,6 +142,43 @@ func (s *TodoServiceImpl) UpdateTodo(c echo.Context, claims dtos.AuthClaims, par
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
 			WithMessage("Error while updating todo into database")
+		return
+	}
+
+	return
+}
+
+func (s *TodoServiceImpl) DeleteTodo(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (err error) {
+	todo, err := s.repository.Todo.GetTodoByID(c, params.ID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = responses.NewError().
+				WithError(err).
+				WithCode(http.StatusBadRequest).
+				WithMessage("Cannot find todo with the given id")
+			return
+		}
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Cannot find todo with the given id")
+		return
+	}
+
+	if todo.UserID != claims.UserID {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusUnauthorized).
+			WithMessage("You are not authorized to delete this todo")
+		return
+	}
+
+	err = s.repository.Todo.DeleteTodo(c, todo)
+	if err != nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Error while deleting todo from database")
 		return
 	}
 
