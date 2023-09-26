@@ -55,4 +55,5 @@ func (r *Route) Todo() {
 	todo.POST("/", r.controller.Todo.CreateTodo, middlewares.AuthMiddleware)
 	todo.GET("/:id", r.controller.Todo.GetTodoByID, middlewares.AuthMiddleware)
 	todo.GET("/", r.controller.Todo.GetTodos, middlewares.AuthMiddleware)
+	todo.PATCH("/:id", r.controller.Todo.UpdateTodo, middlewares.AuthMiddleware)
 }

@@ -18,3 +18,9 @@ type CreateTodoRequest struct {
 type TodoIDParams struct {
 	ID uint `param:"id" validate:"required"`
 }
+
+type UpdateTodoParams struct {
+	ID		uint	`param:"id" validate:"required"`
+	Title   string	`json:"title"`
+	Content string	`json:"content"`
+}

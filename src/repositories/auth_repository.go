@@ -20,4 +20,3 @@ func NewAuthRepository(ioc di.Container) *AuthRepositoryImpl {
 		db: ioc.Get(constants.POSTGRES).(*gorm.DB),
 	}
 }
-

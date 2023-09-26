@@ -16,6 +16,7 @@ type TodoService interface {
 	CreateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.CreateTodoRequest) error
 	GetTodoByID(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (dtos.GetTodoByIDResponse, error)
 	GetTodos(c echo.Context, claims dtos.AuthClaims) (dtos.GetTodosResponse, error)
+	UpdateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateTodoParams) error
 }
 
 type TodoServiceImpl struct {
@@ -103,5 +104,45 @@ func (s *TodoServiceImpl) GetTodos(c echo.Context, claims dtos.AuthClaims) (data
 	}
 
 	data.Todos = todos
+	return
+}
+
+func (s *TodoServiceImpl) UpdateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateTodoParams) (err error) {
+	todo, err := s.repository.Todo.GetTodoByID(c, params.ID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = responses.NewError().
+				WithError(err).
+				WithCode(http.StatusBadRequest).
+				WithMessage("Cannot find todo with the given id")
+			return
+		}
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Cannot find todo with the given id")
+		return
+	}
+
+	if todo.UserID != claims.UserID {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusUnauthorized).
+			WithMessage("You are not authorized to update this todo")
+		return
+	}
+
+	todo.Title = params.Title
+	todo.Content = params.Content
+
+	err = s.repository.Todo.UpdateTodo(c, todo)
+	if err != nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusInternalServerError).
+			WithMessage("Error while updating todo into database")
+		return
+	}
+
 	return
 }
