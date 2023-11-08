@@ -75,17 +75,6 @@ func (s *AuthServiceImpl) Login(c echo.Context, params dtos.LoginRequest) (res d
 		return
 	}
 
-	user.AccessToken = token
-
-	err = s.repository.User.UpdateUser(c, user)
-	if err != nil {
-		err = responses.NewError().
-			WithError(err).
-			WithCode(http.StatusInternalServerError).
-			WithMessage("Error while updating users access token into database")
-		return
-	}
-
 	res.AccessToken = token
 	return
 }
