@@ -47,7 +47,7 @@ func (r *Route) User() {
 func (r *Route) Auth() {
 	auth := r.router.Group("auth")
 	auth.POST("/login", r.controller.Auth.Login)
-	auth.POST("/logout", r.controller.Auth.Logout, middlewares.AuthMiddleware)
+	// auth.POST("/logout", r.controller.Auth.Logout, middlewares.AuthMiddleware)
 }
 
 func (r *Route) Todo() {
