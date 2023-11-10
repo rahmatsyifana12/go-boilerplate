@@ -13,7 +13,7 @@ import (
 func GenerateJWTString(claims dtos.AuthClaims) (token string, err error) {
 	rawToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	jwtSecret := []byte(os.Getenv("JWT_SECRET"))
+	jwtSecret := []byte(os.Getenv("JWT_ACCESS_SECRET"))
 	token, err = rawToken.SignedString(jwtSecret)
 	if err != nil {
 		err = errors.New("failed to sign JWT")
@@ -23,7 +23,7 @@ func GenerateJWTString(claims dtos.AuthClaims) (token string, err error) {
 
 func ParseAndValidateJWT(token string) (claims dtos.AuthClaims, err error) {
 	_, err = jwt.ParseWithClaims(token, &claims, func(t *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("JWT_SECRET")), nil
+		return []byte(os.Getenv("JWT_ACCESS_SECRET")), nil
 	})
 	if err != nil {
 		return
