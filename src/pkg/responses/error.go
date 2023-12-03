@@ -12,6 +12,12 @@ type CustomError struct {
 	Code    int
 }
 
+type CustomErrorJSON struct {
+	Message         string   `json:"message"`
+	ErrorMessage    string   `json:"error_message"`
+	Stack           []string `json:"stack"`
+}
+
 func (e *CustomError) WithMessage(message string) *CustomError {
 	e.Message = message
 	return e
@@ -48,4 +54,19 @@ func (e *CustomError) Sanitize() *CustomError {
 
 func (e CustomError) Error() string {
 	return e.Message
+}
+
+func (e *CustomError) GetStackTrace() []string {
+	rawStackTrace := tracerr.StackTrace(e.Err)
+	stackTrace := parseStackTrace(rawStackTrace)
+
+	return stackTrace
+}
+
+func (e *CustomError) ToJSON() CustomErrorJSON {
+	return CustomErrorJSON{
+		Message:        e.Message,
+		ErrorMessage:   e.Err.Error(),
+		Stack:          e.GetStackTrace(),
+	}
 }

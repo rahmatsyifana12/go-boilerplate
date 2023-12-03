@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/labstack/echo/v4 v4.11.1
+	github.com/rs/zerolog v1.31.0
 	github.com/ztrue/tracerr v0.4.0
 	gorm.io/driver/postgres v1.5.2
 )
