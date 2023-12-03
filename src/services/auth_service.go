@@ -96,8 +96,6 @@ func (s *AuthServiceImpl) Logout(c echo.Context, authClaims dtos.AuthClaims) (er
 		return
 	}
 
-	user.AccessToken = ""
-
 	err = s.repository.User.UpdateUser(c, user)
 	if err != nil {
 		err = responses.NewError().
