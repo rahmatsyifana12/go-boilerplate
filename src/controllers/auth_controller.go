@@ -36,7 +36,8 @@ func (t *AuthControllerImpl) Login(c echo.Context) (err error) {
 		return responses.NewError().
 			WithCode(http.StatusBadRequest).
 			WithError(err).
-			WithMessage("Failed to bind parameters")
+			WithMessage("Failed to bind parameters").
+			SendErrorResponse(c)
 	}
 
 	res, err := t.service.Auth.Login(c, params)

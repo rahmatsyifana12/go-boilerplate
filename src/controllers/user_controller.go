@@ -35,10 +35,12 @@ func (t *UserControllerImpl) CreateUser(c echo.Context) (err error) {
 	)
 
     if err = c.Bind(&params); err != nil {
-		return responses.NewError().
+		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusBadRequest).
-			WithMessage("Failed to bind parameters")
+			WithMessage("Failed to bind parameters").
+			SendErrorResponse(c)
+		return
 	}
 
 	err = t.service.User.CreateUser(c, params)
@@ -59,7 +61,8 @@ func (t *UserControllerImpl) GetUserByID(c echo.Context) error {
 		return responses.NewError().
 			WithCode(http.StatusBadRequest).
 			WithError(err).
-			WithMessage("Failed to bind parameters")
+			WithMessage("Failed to bind parameters").
+			SendErrorResponse(c)
 	}
 
 	claims, err := helpers.GetAuthClaims(c)
@@ -89,7 +92,8 @@ func (t *UserControllerImpl) UpdateUser(c echo.Context) error {
 		return responses.NewError().
 			WithCode(http.StatusBadRequest).
 			WithError(err).
-			WithMessage("Failed to bind parameters")
+			WithMessage("Failed to bind parameters").
+			SendErrorResponse(c)
 	}
 
 	claims, err := helpers.GetAuthClaims(c)
@@ -118,7 +122,8 @@ func (t *UserControllerImpl) DeleteUser (c echo.Context) error {
 		return responses.NewError().
 			WithCode(http.StatusBadRequest).
 			WithError(err).
-			WithMessage("Failed to bind parameters")
+			WithMessage("Failed to bind parameters").
+			SendErrorResponse(c)
 	}
 
 	claims, err := helpers.GetAuthClaims(c)

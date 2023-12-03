@@ -3,6 +3,7 @@ package responses
 import (
 	"net/http"
 
+	"github.com/labstack/echo/v4"
 	"github.com/ztrue/tracerr"
 )
 
@@ -69,4 +70,24 @@ func (e *CustomError) ToJSON() CustomErrorJSON {
 		ErrorMessage:   e.Err.Error(),
 		Stack:          e.GetStackTrace(),
 	}
+}
+
+func (e *CustomError) SendErrorResponse(c echo.Context) error {
+	e.Sanitize()
+
+	rawStackTrace := tracerr.StackTrace(e.Err)
+	stackTrace := parseStackTrace(rawStackTrace)
+
+	var errorMessage string
+	if e.Err != nil {
+		errorMessage = e.Err.Error()
+	}
+
+	response := ErrorResponse{
+		Message:      e.Message,
+		ErrorMessage: errorMessage,
+		Stack:        stackTrace,
+	}
+
+	return c.JSON(e.Code, response)
 }

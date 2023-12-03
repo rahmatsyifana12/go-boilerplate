@@ -39,7 +39,8 @@ func (t *TodoControllerImpl) CreateTodo(c echo.Context) (err error) {
 		return responses.NewError().
 			WithCode(http.StatusBadRequest).
 			WithError(err).
-			WithMessage("Failed to bind parameters")
+			WithMessage("Failed to bind parameters").
+			SendErrorResponse(c)
 	}
 
 	claims, err := helpers.GetAuthClaims(c)
@@ -68,7 +69,8 @@ func (t *TodoControllerImpl) GetTodoByID(c echo.Context) error {
 		return responses.NewError().
 			WithCode(http.StatusBadRequest).
 			WithError(err).
-			WithMessage("Failed to bind parameters")
+			WithMessage("Failed to bind parameters").
+			SendErrorResponse(c)
 	}
 
 	claims, err := helpers.GetAuthClaims(c)
@@ -116,7 +118,8 @@ func (t *TodoControllerImpl) UpdateTodo(c echo.Context) error {
 		return responses.NewError().
 			WithCode(http.StatusBadRequest).
 			WithError(err).
-			WithMessage("Failed to bind parameters")
+			WithMessage("Failed to bind parameters").
+			SendErrorResponse(c)
 	}
 
 	claims, err := helpers.GetAuthClaims(c)
@@ -145,7 +148,8 @@ func (t *TodoControllerImpl) DeleteTodo(c echo.Context) error {
 		return responses.NewError().
 			WithCode(http.StatusBadRequest).
 			WithError(err).
-			WithMessage("Failed to bind parameters")
+			WithMessage("Failed to bind parameters").
+			SendErrorResponse(c)
 	}
 
 	claims, err := helpers.GetAuthClaims(c)
