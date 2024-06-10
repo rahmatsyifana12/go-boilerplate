@@ -17,7 +17,8 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return responses.NewError().
 				WithError(constants.ERR_NOT_LOGGED_IN).
 				WithCode(http.StatusUnauthorized).
-				WithMessage("You don't have the permission.")
+				WithMessage("You don't have the permission.").
+				SendErrorResponse(c)
 		}
 
 		authHeader := authHeaderList[0]
@@ -27,7 +28,8 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return responses.NewError().
 				WithError(constants.ERR_NOT_LOGGED_IN).
 				WithCode(http.StatusUnauthorized).
-				WithMessage("Invalid authorization header.")
+				WithMessage("Invalid authorization header.").
+				SendErrorResponse(c)
 		}
 
 		token := strings.Replace(authHeader, bearerPrefix, "", 1)
@@ -36,7 +38,8 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return responses.NewError().
 				WithError(err).
 				WithCode(http.StatusUnauthorized).
-				WithMessage("Invalid authorization header.")
+				WithMessage("Invalid authorization header.").
+				SendErrorResponse(c)
 		}
 
 		c.Set(constants.AuthClaimsKey, claims)
