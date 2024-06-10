@@ -10,11 +10,11 @@ import (
 )
 
 type UserRepository interface {
-	CreateUser(c echo.Context, user models.User) error
-	GetUserByID(c echo.Context, userID uint) (models.User, error)
-	GetUserByUsername(c echo.Context, username string) (models.User, error)
-	UpdateUser(c echo.Context, user models.User) error
-	DeleteUser(c echo.Context, user models.User) error
+	CreateUser(c echo.Context, user models.User) (err error)
+	GetUserByID(c echo.Context, userID uint) (user *models.User, err error)
+	GetUserByUsername(c echo.Context, username string) (user *models.User, err error)
+	UpdateUser(c echo.Context, user models.User) (err error)
+	DeleteUser(c echo.Context, user models.User) (err error)
 }
 
 type UserRepositoryImpl struct {
@@ -32,13 +32,19 @@ func (r *UserRepositoryImpl) CreateUser(c echo.Context, user models.User) (err e
 	return
 }
 
-func (r *UserRepositoryImpl) GetUserByID(c echo.Context, userID uint) (user models.User, err error) {
-	err = r.db.Where("id = ?", userID).First(&user).WithContext(c.Request().Context()).Error
+func (r *UserRepositoryImpl) GetUserByID(c echo.Context, userID uint) (user *models.User, err error) {
+	err = r.db.Where("id = ?", userID).Find(&user).WithContext(c.Request().Context()).Error
+	if user.ID == 0 {
+		return nil, nil
+	}
 	return
 }
 
-func (r *UserRepositoryImpl) GetUserByUsername(c echo.Context, username string) (user models.User, err error) {
-	err = r.db.Where("username = ?", username).First(&user).WithContext(c.Request().Context()).Error
+func (r *UserRepositoryImpl) GetUserByUsername(c echo.Context, username string) (user *models.User, err error) {
+	err = r.db.Where("username = ?", username).Find(&user).WithContext(c.Request().Context()).Error
+	if user.ID == 0 {
+		return nil, nil
+	}
 	return
 }
 

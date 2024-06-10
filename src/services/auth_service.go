@@ -96,7 +96,7 @@ func (s *AuthServiceImpl) Logout(c echo.Context, authClaims dtos.AuthClaims) (er
 		return
 	}
 
-	err = s.repository.User.UpdateUser(c, user)
+	err = s.repository.User.UpdateUser(c, *user)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).

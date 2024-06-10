@@ -90,7 +90,7 @@ func (s *TodoServiceImpl) GetTodoByID(c echo.Context, claims dtos.AuthClaims, pa
 		return
 	}
 
-	data.Todo = todo
+	data.Todo = *todo
 	return
 }
 
@@ -136,7 +136,7 @@ func (s *TodoServiceImpl) UpdateTodo(c echo.Context, claims dtos.AuthClaims, par
 	todo.Title = params.Title
 	todo.Content = params.Content
 
-	err = s.repository.Todo.UpdateTodo(c, todo)
+	err = s.repository.Todo.UpdateTodo(c, *todo)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -173,7 +173,7 @@ func (s *TodoServiceImpl) DeleteTodo(c echo.Context, claims dtos.AuthClaims, par
 		return
 	}
 
-	err = s.repository.Todo.DeleteTodo(c, todo)
+	err = s.repository.Todo.DeleteTodo(c, *todo)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).

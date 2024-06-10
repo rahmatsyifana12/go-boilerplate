@@ -10,11 +10,11 @@ import (
 )
 
 type TodoRepository interface {
-	CreateTodo(c echo.Context, todo models.Todo) error
-	GetTodoByID(c echo.Context, todoID uint) (todo models.Todo, err error)
+	CreateTodo(c echo.Context, todo models.Todo) (err error)
+	GetTodoByID(c echo.Context, todoID uint) (todo *models.Todo, err error)
 	GetTodosByUserID(c echo.Context, userID uint) (todos []models.Todo, err error)
-	UpdateTodo(c echo.Context, todo models.Todo) error
-	DeleteTodo(c echo.Context, todo models.Todo) error
+	UpdateTodo(c echo.Context, todo models.Todo) (err error)
+	DeleteTodo(c echo.Context, todo models.Todo) (err error)
 }
 
 type TodoRepositoryImpl struct {
@@ -32,8 +32,11 @@ func (r *TodoRepositoryImpl) CreateTodo(c echo.Context, todo models.Todo) error 
 	return err
 }
 
-func (r *TodoRepositoryImpl) GetTodoByID(c echo.Context, todoID uint) (todo models.Todo, err error) {
-	err = r.db.Where("id = ?", todoID).First(&todo).WithContext(c.Request().Context()).Error
+func (r *TodoRepositoryImpl) GetTodoByID(c echo.Context, todoID uint) (todo *models.Todo, err error) {
+	err = r.db.Where("id = ?", todoID).Find(&todo).WithContext(c.Request().Context()).Error
+	if todo.ID == 0 {
+		return nil, nil
+	}
 	return
 }
 

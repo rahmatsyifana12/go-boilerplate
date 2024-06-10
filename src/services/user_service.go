@@ -80,16 +80,17 @@ func (s *UserServiceImpl) CreateUser(c echo.Context, params dtos.CreateUserReque
 func (s *UserServiceImpl) GetUserByID(c echo.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (data dtos.GetUserByIDResponse, err error) {
 	user, err := s.repository.User.GetUserByID(c, params.ID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = responses.NewError().
-				WithError(err).
-				WithCode(http.StatusBadRequest).
-				WithMessage("Cannot find user with the given id")
-			return
-		}
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
+			WithMessage("Cannot find user with the given id")
+		return
+	}
+
+	if user == nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusBadRequest).
 			WithMessage("Cannot find user with the given id")
 		return
 	}
@@ -102,7 +103,7 @@ func (s *UserServiceImpl) GetUserByID(c echo.Context, claims dtos.AuthClaims, pa
 		return
 	}
 
-	data.User = user
+	data.User = *user
 	return
 }
 
@@ -134,7 +135,7 @@ func (s *UserServiceImpl) UpdateUser(c echo.Context, claims dtos.AuthClaims, par
 	user.FullName = params.FullName
 	user.PhoneNumber = params.PhoneNumber
 
-	err = s.repository.User.UpdateUser(c, user)
+	err = s.repository.User.UpdateUser(c, *user)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -171,7 +172,7 @@ func (s *UserServiceImpl) DeleteUser(c echo.Context, claims dtos.AuthClaims, par
 		return
 	}
 
-	err = s.repository.User.DeleteUser(c, user)
+	err = s.repository.User.DeleteUser(c, *user)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
