@@ -9,7 +9,6 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/sarulabs/di"
-	"gorm.io/gorm"
 )
 
 type TodoService interface {
@@ -33,16 +32,17 @@ func NewTodoService(ioc di.Container) *TodoServiceImpl {
 func (s *TodoServiceImpl) CreateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.CreateTodoRequest) (err error) {
 	user, err := s.repository.User.GetUserByID(c, claims.UserID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = responses.NewError().
-				WithError(err).
-				WithCode(http.StatusBadRequest).
-				WithMessage("Cannot find user with the given id")
-			return
-		}
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
+			WithMessage("Error while retrieving user by id from database")
+		return
+	}
+
+	if user == nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusBadRequest).
 			WithMessage("Cannot find user with the given id")
 		return
 	}
@@ -68,16 +68,17 @@ func (s *TodoServiceImpl) CreateTodo(c echo.Context, claims dtos.AuthClaims, par
 func (s *TodoServiceImpl) GetTodoByID(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (data dtos.GetTodoByIDResponse, err error) {
 	todo, err := s.repository.Todo.GetTodoByID(c, params.ID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = responses.NewError().
-				WithError(err).
-				WithCode(http.StatusBadRequest).
-				WithMessage("Cannot find todo with the given id")
-			return
-		}
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
+			WithMessage("Error while retrieving todo by id from database")
+		return
+	}
+
+	if todo == nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusBadRequest).
 			WithMessage("Cannot find todo with the given id")
 		return
 	}
@@ -111,16 +112,17 @@ func (s *TodoServiceImpl) GetTodos(c echo.Context, claims dtos.AuthClaims) (data
 func (s *TodoServiceImpl) UpdateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateTodoParams) (err error) {
 	todo, err := s.repository.Todo.GetTodoByID(c, params.ID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = responses.NewError().
-				WithError(err).
-				WithCode(http.StatusBadRequest).
-				WithMessage("Cannot find todo with the given id")
-			return
-		}
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
+			WithMessage("Error while retrieving todo by id from database")
+		return
+	}
+
+	if todo == nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusBadRequest).
 			WithMessage("Cannot find todo with the given id")
 		return
 	}
@@ -151,16 +153,17 @@ func (s *TodoServiceImpl) UpdateTodo(c echo.Context, claims dtos.AuthClaims, par
 func (s *TodoServiceImpl) DeleteTodo(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (err error) {
 	todo, err := s.repository.Todo.GetTodoByID(c, params.ID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = responses.NewError().
-				WithError(err).
-				WithCode(http.StatusBadRequest).
-				WithMessage("Cannot find todo with the given id")
-			return
-		}
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
+			WithMessage("Cannot find todo with the given id")
+		return
+	}
+
+	if todo == nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusBadRequest).
 			WithMessage("Cannot find todo with the given id")
 		return
 	}

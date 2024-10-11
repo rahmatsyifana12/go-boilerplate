@@ -10,7 +10,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/sarulabs/di"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 type UserService interface {
@@ -32,15 +31,15 @@ func NewUserService(ioc di.Container) *UserServiceImpl {
 
 func (s *UserServiceImpl) CreateUser(c echo.Context, params dtos.CreateUserRequest) (err error) {
 	user, err := s.repository.User.GetUserByUsername(c, params.Username)
-	if err != nil && err != gorm.ErrRecordNotFound {
+	if err != nil {
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
-			WithMessage(err.Error())
+			WithMessage("Error while retrieving user by username from database")
 		return
 	}
 
-	if user.ID != 0 {
+	if user != nil {
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusBadRequest).
@@ -83,7 +82,7 @@ func (s *UserServiceImpl) GetUserByID(c echo.Context, claims dtos.AuthClaims, pa
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
-			WithMessage("Cannot find user with the given id")
+			WithMessage("Error while retrieving user by id from database")
 		return
 	}
 
@@ -110,16 +109,17 @@ func (s *UserServiceImpl) GetUserByID(c echo.Context, claims dtos.AuthClaims, pa
 func (s *UserServiceImpl) UpdateUser(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateUserParams) (err error) {
 	user, err := s.repository.User.GetUserByID(c, params.ID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = responses.NewError().
-				WithError(err).
-				WithCode(http.StatusBadRequest).
-				WithMessage("Cannot find user with the given id")
-			return
-		}
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
+			WithMessage("Error while retrieving user by id from database")
+		return
+	}
+
+	if user == nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusBadRequest).
 			WithMessage("Cannot find user with the given id")
 		return
 	}
@@ -150,16 +150,17 @@ func (s *UserServiceImpl) UpdateUser(c echo.Context, claims dtos.AuthClaims, par
 func (s *UserServiceImpl) DeleteUser(c echo.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (err error) {
 	user, err := s.repository.User.GetUserByID(c, params.ID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = responses.NewError().
-				WithError(err).
-				WithCode(http.StatusBadRequest).
-				WithMessage("Cannot find user with the given id")
-			return
-		}
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
+			WithMessage("Error while retrieving user by id from database")
+		return
+	}
+
+	if user == nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusBadRequest).
 			WithMessage("Cannot find user with the given id")
 		return
 	}
@@ -177,7 +178,7 @@ func (s *UserServiceImpl) DeleteUser(c echo.Context, claims dtos.AuthClaims, par
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
-			WithMessage("Cannot delete user")
+			WithMessage("Error while deleting user from database")
 		return
 	}
 

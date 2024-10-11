@@ -33,7 +33,7 @@ func (r *TodoRepositoryImpl) CreateTodo(c echo.Context, todo models.Todo) error 
 }
 
 func (r *TodoRepositoryImpl) GetTodoByID(c echo.Context, todoID uint) (todo *models.Todo, err error) {
-	err = r.db.Where("id = ?", todoID).Find(&todo).WithContext(c.Request().Context()).Error
+	err = r.db.Where("id = ?", todoID).Find(&todo).Limit(1).WithContext(c.Request().Context()).Error
 	if todo.ID == 0 {
 		return nil, nil
 	}

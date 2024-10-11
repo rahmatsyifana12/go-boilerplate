@@ -13,7 +13,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/sarulabs/di"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 type AuthService interface {
@@ -34,17 +33,18 @@ func NewAuthService(ioc di.Container) *AuthServiceImpl {
 func (s *AuthServiceImpl) Login(c echo.Context, params dtos.LoginRequest) (res dtos.LoginResponse, err error) {
 	user, err := s.repository.User.GetUserByUsername(c, params.Username)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = responses.NewError().
-				WithError(err).
-				WithCode(http.StatusBadRequest).
-				WithMessage("Cannot find user with the given username")
-			return
-		}
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
-			WithMessage("Error while retrieving user from database")
+			WithMessage("Error while retrieving user by username from database")
+		return
+	}
+
+	if user == nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusBadRequest).
+			WithMessage("Cannot find user with the given username")
 		return
 	}
 
@@ -82,17 +82,18 @@ func (s *AuthServiceImpl) Login(c echo.Context, params dtos.LoginRequest) (res d
 func (s *AuthServiceImpl) Logout(c echo.Context, authClaims dtos.AuthClaims) (err error) {
 	user, err := s.repository.User.GetUserByID(c, authClaims.UserID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = responses.NewError().
-				WithError(err).
-				WithCode(http.StatusBadRequest).
-				WithMessage("Cannot find user with the given id")
-			return
-		}
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusInternalServerError).
-			WithMessage("Error while retrieving user from database")
+			WithMessage("Error while retrieving user by id from database")
+		return
+	}
+
+	if user == nil {
+		err = responses.NewError().
+			WithError(err).
+			WithCode(http.StatusBadRequest).
+			WithMessage("Cannot find user with the given id")
 		return
 	}
 

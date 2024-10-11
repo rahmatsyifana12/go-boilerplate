@@ -33,7 +33,7 @@ func (r *UserRepositoryImpl) CreateUser(c echo.Context, user models.User) (err e
 }
 
 func (r *UserRepositoryImpl) GetUserByID(c echo.Context, userID uint) (user *models.User, err error) {
-	err = r.db.Where("id = ?", userID).Find(&user).WithContext(c.Request().Context()).Error
+	err = r.db.Where("id = ?", userID).Find(&user).Limit(1).WithContext(c.Request().Context()).Error
 	if user.ID == 0 {
 		return nil, nil
 	}
@@ -41,7 +41,7 @@ func (r *UserRepositoryImpl) GetUserByID(c echo.Context, userID uint) (user *mod
 }
 
 func (r *UserRepositoryImpl) GetUserByUsername(c echo.Context, username string) (user *models.User, err error) {
-	err = r.db.Where("username = ?", username).Find(&user).WithContext(c.Request().Context()).Error
+	err = r.db.Where("username = ?", username).Find(&user).Limit(1).WithContext(c.Request().Context()).Error
 	if user.ID == 0 {
 		return nil, nil
 	}
