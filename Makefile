@@ -4,7 +4,7 @@ APP_NAME := go-boilerplate
 SOURCE_PATH := ./src/
 MIGRATION_DIR := ./migrations
 
-DBMATE_URL := postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable
+DBMATE_URL := postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB_NAME}?sslmode=disable
 
 .PHONY: build
 build:
