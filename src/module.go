@@ -31,6 +31,13 @@ func (m *Module) NewIOC() di.Container {
 			},
 		},
 		di.Def{
+			Name: constants.REDIS,
+			Build: func(ctn di.Container) (interface{}, error) {
+				rdb, err := databases.NewRedisClient()
+				return rdb, err
+			},
+		},
+		di.Def{
 			Name: constants.CONTROLLER,
 			Build: func(ctn di.Container) (interface{}, error) {
 				return controllers.NewController(builder.Build()), nil
