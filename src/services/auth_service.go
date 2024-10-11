@@ -17,8 +17,8 @@ import (
 )
 
 type AuthService interface {
-	Login(c echo.Context, params dtos.LoginRequest) (dtos.LoginResponse, error)
-	Logout(c echo.Context, authClaims dtos.AuthClaims) error
+	Login(c echo.Context, params dtos.LoginRequest) (data dtos.LoginResponse, err error)
+	Logout(c echo.Context, authClaims dtos.AuthClaims) (err error)
 }
 
 type AuthServiceImpl struct {

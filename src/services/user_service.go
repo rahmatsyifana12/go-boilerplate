@@ -14,10 +14,10 @@ import (
 )
 
 type UserService interface {
-	CreateUser(c echo.Context, params dtos.CreateUserRequest) error
-	GetUserByID(c echo.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (dtos.GetUserByIDResponse, error)
-	UpdateUser(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateUserParams) error
-	DeleteUser(c echo.Context, claims dtos.AuthClaims, params dtos.UserIDParams) error
+	CreateUser(c echo.Context, params dtos.CreateUserRequest) (err error)
+	GetUserByID(c echo.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (data dtos.GetUserByIDResponse, err error)
+	UpdateUser(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateUserParams) (err error)
+	DeleteUser(c echo.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (err error)
 }
 
 type UserServiceImpl struct {

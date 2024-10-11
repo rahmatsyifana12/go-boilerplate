@@ -13,8 +13,8 @@ import (
 )
 
 type AuthController interface {
-	Login(c echo.Context) error
-	Logout(c echo.Context) error
+	Login(c echo.Context) (err error)
+	Logout(c echo.Context) (err error)
 }
 
 type AuthControllerImpl struct {

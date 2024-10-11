@@ -13,11 +13,11 @@ import (
 )
 
 type TodoController interface {
-	CreateTodo(c echo.Context) error
-	GetTodoByID(c echo.Context) error
-	GetTodos(c echo.Context) error
-	UpdateTodo(c echo.Context) error
-	DeleteTodo(c echo.Context) error
+	CreateTodo(c echo.Context) (err error)
+	GetTodoByID(c echo.Context) (err error)
+	GetTodos(c echo.Context) (err error)
+	UpdateTodo(c echo.Context) (err error)
+	DeleteTodo(c echo.Context) (err error)
 }
 
 type TodoControllerImpl struct {

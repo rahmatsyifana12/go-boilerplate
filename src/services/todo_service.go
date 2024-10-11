@@ -13,11 +13,11 @@ import (
 )
 
 type TodoService interface {
-	CreateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.CreateTodoRequest) error
-	GetTodoByID(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (dtos.GetTodoByIDResponse, error)
-	GetTodos(c echo.Context, claims dtos.AuthClaims) (dtos.GetTodosResponse, error)
-	UpdateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateTodoParams) error
-	DeleteTodo(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) error
+	CreateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.CreateTodoRequest) (err error)
+	GetTodoByID(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (data dtos.GetTodoByIDResponse, err error)
+	GetTodos(c echo.Context, claims dtos.AuthClaims) (data dtos.GetTodosResponse, err error)
+	UpdateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateTodoParams) (err error)
+	DeleteTodo(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (err error)
 }
 
 type TodoServiceImpl struct {

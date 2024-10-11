@@ -13,10 +13,10 @@ import (
 )
 
 type UserController interface {
-	CreateUser(c echo.Context) error
-	GetUserByID(c echo.Context) error
-	UpdateUser(c echo.Context) error
-	DeleteUser(c echo.Context) error
+	CreateUser(c echo.Context) (err error)
+	GetUserByID(c echo.Context) (err error)
+	UpdateUser(c echo.Context) (err error)
+	DeleteUser(c echo.Context) (err error)
 }
 
 type UserControllerImpl struct {
