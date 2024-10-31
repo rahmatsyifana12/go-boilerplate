@@ -6,4 +6,5 @@ const (
 	SERVICE    = "service"
 	REPOSITORY = "repository"
 	CONTROLLER = "controller"
+	Util	   = "util"
 )

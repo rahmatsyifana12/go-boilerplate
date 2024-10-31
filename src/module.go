@@ -4,6 +4,7 @@ import (
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/controllers"
 	"go-boilerplate/src/pkg/databases"
+	"go-boilerplate/src/pkg/utils"
 	"go-boilerplate/src/repositories"
 	"go-boilerplate/src/services"
 
@@ -53,6 +54,12 @@ func (m *Module) NewIOC() di.Container {
 			Name: constants.REPOSITORY,
 			Build: func(ctn di.Container) (interface{}, error) {
 				return repositories.NewRepository(builder.Build()), nil
+			},
+		},
+		di.Def{
+			Name: constants.Util,
+			Build: func(ctn di.Container) (interface{}, error) {
+				return utils.NewUtil(), nil
 			},
 		},
 	)
