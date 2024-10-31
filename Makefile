@@ -1,6 +1,6 @@
 include .env
 
-APP_NAME := go-boilerplate
+APP_NAME := todo-app-backend
 SOURCE_PATH := ./src/
 MIGRATION_DIR := ./migrations
 
@@ -9,6 +9,11 @@ DBMATE_URL := postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${POSTGRES_HO
 .PHONY: build
 build:
 	go build -v -o bin/${APP_NAME} ./src
+
+.PHONY: deploy
+deploy:
+	go build -v -o bin/${APP_NAME} ./src
+	    sudo supervisorctl restart ${APP_NAME}
 
 .PHONY: start
 start:
