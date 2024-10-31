@@ -21,12 +21,12 @@ type AuthService interface {
 }
 
 type AuthServiceImpl struct {
-	repository	*repositories.Repository
+	repository *repositories.Repository
 }
 
 func NewAuthService(ioc di.Container) *AuthServiceImpl {
 	return &AuthServiceImpl{
-		repository: ioc.Get(constants.REPOSITORY).(*repositories.Repository),
+		repository: ioc.Get(constants.Repository).(*repositories.Repository),
 	}
 }
 
@@ -61,7 +61,7 @@ func (s *AuthServiceImpl) Login(c echo.Context, params dtos.LoginRequest) (res d
 	currentTime := time.Now()
 
 	token, err := helpers.GenerateJWTString(dtos.AuthClaims{
-		UserID:       user.ID,
+		UserID: user.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(currentTime.Add(tokenExpireDuration)),
 			IssuedAt:  jwt.NewNumericDate(currentTime),

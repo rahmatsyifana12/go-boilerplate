@@ -10,16 +10,16 @@ import (
 )
 
 type Route struct {
-	app		*echo.Echo
-	router	*echo.Group
-	controller	*controllers.Controller
+	app        *echo.Echo
+	router     *echo.Group
+	controller *controllers.Controller
 }
 
 func NewRoute(app *echo.Echo, ioc di.Container) *Route {
 	return &Route{
-		app: 	app,
-		router: app.Group(""),
-		controller: ioc.Get(constants.CONTROLLER).(*controllers.Controller),
+		app:        app,
+		router:     app.Group(""),
+		controller: ioc.Get(constants.Controller).(*controllers.Controller),
 	}
 }
 

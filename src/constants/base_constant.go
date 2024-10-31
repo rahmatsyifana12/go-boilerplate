@@ -1,10 +1,10 @@
 package constants
 
 const (
-	POSTGRES   = "postgres"
-	REDIS      = "redis"
-	SERVICE    = "service"
-	REPOSITORY = "repository"
-	CONTROLLER = "controller"
+	Postgres   = "postgres"
+	Redis      = "redis"
+	Service    = "service"
+	Repository = "repository"
+	Controller = "controller"
 	Util	   = "util"
 )

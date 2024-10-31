@@ -21,18 +21,18 @@ type TodoController interface {
 }
 
 type TodoControllerImpl struct {
-	service	*services.Service
+	service *services.Service
 }
 
 func NewTodoController(ioc di.Container) *TodoControllerImpl {
 	return &TodoControllerImpl{
-		service: ioc.Get(constants.SERVICE).(*services.Service),
+		service: ioc.Get(constants.Service).(*services.Service),
 	}
 }
 
 func (t *TodoControllerImpl) CreateTodo(c echo.Context) (err error) {
 	var (
-		params	dtos.CreateTodoRequest
+		params dtos.CreateTodoRequest
 	)
 
 	if err = c.Bind(&params); err != nil {
@@ -61,8 +61,8 @@ func (t *TodoControllerImpl) CreateTodo(c echo.Context) (err error) {
 
 func (t *TodoControllerImpl) GetTodoByID(c echo.Context) error {
 	var (
-		params	dtos.TodoIDParams
-		err		error
+		params dtos.TodoIDParams
+		err    error
 	)
 
 	if err = c.Bind(&params); err != nil {
@@ -110,8 +110,8 @@ func (t *TodoControllerImpl) GetTodos(c echo.Context) error {
 
 func (t *TodoControllerImpl) UpdateTodo(c echo.Context) error {
 	var (
-		params	dtos.UpdateTodoParams
-		err		error
+		params dtos.UpdateTodoParams
+		err    error
 	)
 
 	if err = c.Bind(&params); err != nil {
@@ -140,8 +140,8 @@ func (t *TodoControllerImpl) UpdateTodo(c echo.Context) error {
 
 func (t *TodoControllerImpl) DeleteTodo(c echo.Context) error {
 	var (
-		params	dtos.TodoIDParams
-		err		error
+		params dtos.TodoIDParams
+		err    error
 	)
 
 	if err = c.Bind(&params); err != nil {

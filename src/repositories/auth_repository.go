@@ -8,15 +8,14 @@ import (
 )
 
 type AuthRepository interface {
-
 }
 
 type AuthRepositoryImpl struct {
-	db	*gorm.DB
+	db *gorm.DB
 }
 
 func NewAuthRepository(ioc di.Container) *AuthRepositoryImpl {
 	return &AuthRepositoryImpl{
-		db: ioc.Get(constants.POSTGRES).(*gorm.DB),
+		db: ioc.Get(constants.Postgres).(*gorm.DB),
 	}
 }

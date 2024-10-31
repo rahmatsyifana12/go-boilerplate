@@ -25,16 +25,16 @@ type UserControllerImpl struct {
 
 func NewUserController(ioc di.Container) *UserControllerImpl {
 	return &UserControllerImpl{
-        service: ioc.Get(constants.SERVICE).(*services.Service),
-    }
+		service: ioc.Get(constants.Service).(*services.Service),
+	}
 }
 
 func (t *UserControllerImpl) CreateUser(c echo.Context) (err error) {
 	var (
-		params	dtos.CreateUserRequest
+		params dtos.CreateUserRequest
 	)
 
-    if err = c.Bind(&params); err != nil {
+	if err = c.Bind(&params); err != nil {
 		err = responses.NewError().
 			WithError(err).
 			WithCode(http.StatusBadRequest).
@@ -53,8 +53,8 @@ func (t *UserControllerImpl) CreateUser(c echo.Context) (err error) {
 
 func (t *UserControllerImpl) GetUserByID(c echo.Context) error {
 	var (
-		params	dtos.UserIDParams
-		err		error
+		params dtos.UserIDParams
+		err    error
 	)
 
 	if err = c.Bind(&params); err != nil {
@@ -84,8 +84,8 @@ func (t *UserControllerImpl) GetUserByID(c echo.Context) error {
 
 func (t *UserControllerImpl) UpdateUser(c echo.Context) error {
 	var (
-		params	dtos.UpdateUserParams
-		err		error
+		params dtos.UpdateUserParams
+		err    error
 	)
 
 	if err = c.Bind(&params); err != nil {
@@ -112,10 +112,10 @@ func (t *UserControllerImpl) UpdateUser(c echo.Context) error {
 		Send(c)
 }
 
-func (t *UserControllerImpl) DeleteUser (c echo.Context) error {
+func (t *UserControllerImpl) DeleteUser(c echo.Context) error {
 	var (
-		params	dtos.UserIDParams
-		err		error
+		params dtos.UserIDParams
+		err    error
 	)
 
 	if err = c.Bind(&params); err != nil {

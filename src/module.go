@@ -12,7 +12,7 @@ import (
 	"github.com/sarulabs/di"
 )
 
-type Module struct {}
+type Module struct{}
 
 func (m *Module) New(app *echo.Echo) {
 	ioc := m.NewIOC()
@@ -25,33 +25,33 @@ func (m *Module) NewIOC() di.Container {
 	builder, _ := di.NewBuilder()
 	_ = builder.Add(
 		di.Def{
-			Name: constants.POSTGRES,
+			Name: constants.Postgres,
 			Build: func(ctn di.Container) (interface{}, error) {
 				db, err := databases.NewPostgresClient()
 				return db, err
 			},
 		},
 		di.Def{
-			Name: constants.REDIS,
+			Name: constants.Redis,
 			Build: func(ctn di.Container) (interface{}, error) {
 				rdb, err := databases.NewRedisClient()
 				return rdb, err
 			},
 		},
 		di.Def{
-			Name: constants.CONTROLLER,
+			Name: constants.Controller,
 			Build: func(ctn di.Container) (interface{}, error) {
 				return controllers.NewController(builder.Build()), nil
 			},
 		},
 		di.Def{
-			Name: constants.SERVICE,
+			Name: constants.Service,
 			Build: func(ctn di.Container) (interface{}, error) {
 				return services.NewService(builder.Build()), nil
 			},
 		},
 		di.Def{
-			Name: constants.REPOSITORY,
+			Name: constants.Repository,
 			Build: func(ctn di.Container) (interface{}, error) {
 				return repositories.NewRepository(builder.Build()), nil
 			},

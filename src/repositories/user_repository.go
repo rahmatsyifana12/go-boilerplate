@@ -18,12 +18,12 @@ type UserRepository interface {
 }
 
 type UserRepositoryImpl struct {
-	db	*gorm.DB
+	db *gorm.DB
 }
 
 func NewUserRepository(ioc di.Container) *UserRepositoryImpl {
 	return &UserRepositoryImpl{
-		db: ioc.Get(constants.POSTGRES).(*gorm.DB),
+		db: ioc.Get(constants.Postgres).(*gorm.DB),
 	}
 }
 

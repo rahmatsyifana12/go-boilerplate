@@ -18,18 +18,18 @@ type AuthController interface {
 }
 
 type AuthControllerImpl struct {
-	service	*services.Service
+	service *services.Service
 }
 
 func NewAuthController(ioc di.Container) *AuthControllerImpl {
 	return &AuthControllerImpl{
-		service: ioc.Get(constants.SERVICE).(*services.Service),
+		service: ioc.Get(constants.Service).(*services.Service),
 	}
 }
 
 func (t *AuthControllerImpl) Login(c echo.Context) (err error) {
 	var (
-		params	dtos.LoginRequest
+		params dtos.LoginRequest
 	)
 
 	if err = c.Bind(&params); err != nil {
@@ -58,7 +58,7 @@ func (t *AuthControllerImpl) Logout(c echo.Context) (err error) {
 			WithMessage("Failed to get auth claims")
 	}
 
-	err = t.service.Auth.Logout(c,  authClaims)
+	err = t.service.Auth.Logout(c, authClaims)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusOK).

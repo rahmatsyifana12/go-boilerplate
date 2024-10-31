@@ -18,12 +18,12 @@ type TodoRepository interface {
 }
 
 type TodoRepositoryImpl struct {
-	db	*gorm.DB
+	db *gorm.DB
 }
 
 func NewTodoRepository(ioc di.Container) *TodoRepositoryImpl {
 	return &TodoRepositoryImpl{
-		db: ioc.Get(constants.POSTGRES).(*gorm.DB),
+		db: ioc.Get(constants.Postgres).(*gorm.DB),
 	}
 }
 
