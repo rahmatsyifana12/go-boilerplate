@@ -5,6 +5,7 @@ import (
 	"go-boilerplate/src/dtos"
 	"go-boilerplate/src/pkg/helpers"
 	"go-boilerplate/src/pkg/responses"
+	"go-boilerplate/src/pkg/utils"
 	"go-boilerplate/src/repositories"
 	"net/http"
 	"time"
@@ -22,11 +23,13 @@ type AuthService interface {
 
 type AuthServiceImpl struct {
 	repository *repositories.Repository
+	util       *utils.Util
 }
 
 func NewAuthService(ioc di.Container) *AuthServiceImpl {
 	return &AuthServiceImpl{
 		repository: ioc.Get(constants.Repository).(*repositories.Repository),
+		util:       ioc.Get(constants.Util).(*utils.Util),
 	}
 }
 
@@ -58,7 +61,7 @@ func (s *AuthServiceImpl) Login(c echo.Context, params dtos.LoginRequest) (res d
 	}
 
 	tokenExpireDuration := (time.Hour * 24)
-	currentTime := time.Now()
+	currentTime := s.util.Date.GetTimeNowJakarta()
 
 	token, err := helpers.GenerateJWTString(dtos.AuthClaims{
 		UserID: user.ID,

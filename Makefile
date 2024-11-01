@@ -44,3 +44,9 @@ migration-create:
 .PHONY: migration-down-1
 migration-down-1:
 	migrate -database ${DBMATE_URL} -path migrations down 1
+
+.PHONY: test
+test:
+	mkdir -p coverage
+	go test -v -coverprofile ./coverage/cover.out ./src/services/...
+	go tool cover -html=./coverage/cover.out -o ./coverage/cover.html

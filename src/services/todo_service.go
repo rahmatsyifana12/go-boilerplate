@@ -29,7 +29,7 @@ type TodoServiceImpl struct {
 
 func NewTodoService(ioc di.Container) *TodoServiceImpl {
 	return &TodoServiceImpl{
-		repository: repositories.NewRepository(ioc),
+		repository: ioc.Get(constants.Repository).(*repositories.Repository),
 		util:       ioc.Get(constants.Util).(*utils.Util),
 	}
 }

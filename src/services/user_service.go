@@ -1,6 +1,7 @@
 package services
 
 import (
+	"go-boilerplate/src/constants"
 	"go-boilerplate/src/dtos"
 	"go-boilerplate/src/models"
 	"go-boilerplate/src/pkg/responses"
@@ -25,7 +26,7 @@ type UserServiceImpl struct {
 
 func NewUserService(ioc di.Container) *UserServiceImpl {
 	return &UserServiceImpl{
-		repository: repositories.NewRepository(ioc),
+		repository: ioc.Get(constants.Repository).(*repositories.Repository),
 	}
 }
 
