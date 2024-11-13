@@ -4,3 +4,4 @@ docker-compose.yml
 logs
 coverage
 src/mocks
+coverage.out
