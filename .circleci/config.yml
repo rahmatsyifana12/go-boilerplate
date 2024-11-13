@@ -10,11 +10,11 @@ jobs:
       - checkout
       - run:
           name: Run tests and collect coverage
-          command: go test ./... -coverprofile=coverage.out
+          command: make test
       - run:
           name: Upload coverage to Codecov
           command: |
-            curl -s https://codecov.io/bash | bash -s -- -f coverage.out -t $CODECOV_TOKEN  # Upload the coverage report to Codecov
+            curl -s https://codecov.io/bash | bash -s -- -f ./coverage/cover.out -t $CODECOV_TOKEN  # Upload the coverage report to Codecov
 
 workflow:
   version: 2.1
