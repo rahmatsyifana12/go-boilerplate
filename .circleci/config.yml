@@ -18,7 +18,7 @@ jobs:
 
 workflow:
   version: 2.1
-  build-test:
+  build:
     jobs:
       - build:
         filters:
