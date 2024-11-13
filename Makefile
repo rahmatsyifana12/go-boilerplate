@@ -48,5 +48,5 @@ migration-down-1:
 .PHONY: test
 test:
 	mkdir -p coverage
-	go test -v -coverprofile ./coverage/cover.out ./src/services/...
-	go tool cover -html=./coverage/cover.out -o ./coverage/cover.html
+	go test -v -coverprofile ./coverage/coverage.out ./src/services/...
+	go tool cover -html=./coverage/coverage.out -o ./coverage/coverage.html
