@@ -58,3 +58,15 @@ func (s *UserServiceSuite) TestGetUserByID() {
 		s.Equal(dtos.GetUserByIDResponse{ User: models.User{ Model: gorm.Model{ ID: 1 } } }, data)
 	})
 }
+
+func (s *UserServiceSuite) TestUpdateUser() {
+	s.Run("Success With No Error", func() {
+		s.SetupTest()
+		mock_repositories.UserRepository.EXPECT().GetUserByID(gomock.Any(), uint(1)).Return(&models.User{ Model: gorm.Model{ ID: 1 } }, nil)
+		mock_repositories.UserRepository.EXPECT().UpdateUser(gomock.Any(), models.User{ Model: gorm.Model{ ID: 1 }, FullName: "John Wick", PhoneNumber: "08981297512" })
+
+		err := s.userService.UpdateUser(s.ctx, dtos.AuthClaims{UserID: 1}, dtos.UpdateUserParams{ID: 1, FullName: "John Wick", PhoneNumber: "08981297512"})
+
+		s.Equal(nil, err)
+	})
+}
