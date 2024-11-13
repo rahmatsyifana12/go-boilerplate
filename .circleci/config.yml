@@ -11,10 +11,16 @@ jobs:
       - run:
           name: Run tests and collect coverage
           command: go test ./... -coverprofile=coverage.out
-      - codecov/upload
+      - run:
+          name: Upload coverage to Codecov
+          command: |
+            curl -s https://codecov.io/bash | bash -s -- -f coverage.out -t $CODECOV_TOKEN  # Upload the coverage report to Codecov
 
 workflow:
   version: 2.1
   build-test:
     jobs:
-      - build
+      - build:
+        filters:
+          branches:
+            only: circleci-codecov
