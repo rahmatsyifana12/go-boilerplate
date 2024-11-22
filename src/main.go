@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-    e := echo.New()
+	e := echo.New()
 
 	if err := logger.SetupLogger(); err != nil {
 		panic("Failed to setup logger with error: " + err.Error())
@@ -26,8 +26,8 @@ func main() {
 
 	module := Module{}
 	module.New(e)
-    
-    port, found := os.LookupEnv("PORT")
+
+	port, found := os.LookupEnv("PORT")
 	if !found {
 		port = "5000"
 	}

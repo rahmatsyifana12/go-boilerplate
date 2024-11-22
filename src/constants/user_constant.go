@@ -1,5 +1,5 @@
 package constants
 
 const (
-	DEFAULT_HASH_COST = 10
+	DefaultHashCost = 10
 )
