@@ -32,6 +32,7 @@ func NewTodoController(ioc di.Container) *TodoControllerImpl {
 
 func (t *TodoControllerImpl) CreateTodo(c echo.Context) (err error) {
 	var (
+		ctx    = c.Request().Context()
 		params dtos.CreateTodoRequest
 	)
 
@@ -51,7 +52,7 @@ func (t *TodoControllerImpl) CreateTodo(c echo.Context) (err error) {
 			WithMessage("Failed to get auth claims")
 	}
 
-	err = t.service.Todo.CreateTodo(c, claims, params)
+	err = t.service.Todo.CreateTodo(ctx, claims, params)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusCreated).
@@ -61,6 +62,7 @@ func (t *TodoControllerImpl) CreateTodo(c echo.Context) (err error) {
 
 func (t *TodoControllerImpl) GetTodoByID(c echo.Context) error {
 	var (
+		ctx    = c.Request().Context()
 		params dtos.TodoIDParams
 		err    error
 	)
@@ -81,7 +83,7 @@ func (t *TodoControllerImpl) GetTodoByID(c echo.Context) error {
 			WithMessage("Failed to get auth claims")
 	}
 
-	data, err := t.service.Todo.GetTodoByID(c, claims, params)
+	data, err := t.service.Todo.GetTodoByID(ctx, claims, params)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusOK).
@@ -91,6 +93,10 @@ func (t *TodoControllerImpl) GetTodoByID(c echo.Context) error {
 }
 
 func (t *TodoControllerImpl) GetTodos(c echo.Context) error {
+	var (
+		ctx = c.Request().Context()
+	)
+
 	claims, err := helpers.GetAuthClaims(c)
 	if err != nil {
 		return responses.NewError().
@@ -99,7 +105,7 @@ func (t *TodoControllerImpl) GetTodos(c echo.Context) error {
 			WithMessage("Failed to get auth claims")
 	}
 
-	data, err := t.service.Todo.GetTodos(c, claims)
+	data, err := t.service.Todo.GetTodos(ctx, claims)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusOK).
@@ -110,6 +116,7 @@ func (t *TodoControllerImpl) GetTodos(c echo.Context) error {
 
 func (t *TodoControllerImpl) UpdateTodo(c echo.Context) error {
 	var (
+		ctx    = c.Request().Context()
 		params dtos.UpdateTodoParams
 		err    error
 	)
@@ -130,7 +137,7 @@ func (t *TodoControllerImpl) UpdateTodo(c echo.Context) error {
 			WithMessage("Failed to get auth claims")
 	}
 
-	err = t.service.Todo.UpdateTodo(c, claims, params)
+	err = t.service.Todo.UpdateTodo(ctx, claims, params)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusOK).
@@ -140,6 +147,7 @@ func (t *TodoControllerImpl) UpdateTodo(c echo.Context) error {
 
 func (t *TodoControllerImpl) DeleteTodo(c echo.Context) error {
 	var (
+		ctx    = c.Request().Context()
 		params dtos.TodoIDParams
 		err    error
 	)
@@ -160,7 +168,7 @@ func (t *TodoControllerImpl) DeleteTodo(c echo.Context) error {
 			WithMessage("Failed to get auth claims")
 	}
 
-	err = t.service.Todo.DeleteTodo(c, claims, params)
+	err = t.service.Todo.DeleteTodo(ctx, claims, params)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusOK).

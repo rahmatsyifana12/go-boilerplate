@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/dtos"
 	"go-boilerplate/src/models"
@@ -8,16 +9,15 @@ import (
 	"go-boilerplate/src/repositories"
 	"net/http"
 
-	"github.com/labstack/echo/v4"
 	"github.com/sarulabs/di"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService interface {
-	CreateUser(c echo.Context, params dtos.CreateUserRequest) (err error)
-	GetUserByID(c echo.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (data dtos.GetUserByIDResponse, err error)
-	UpdateUser(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateUserParams) (err error)
-	DeleteUser(c echo.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (err error)
+	CreateUser(ctx context.Context, params dtos.CreateUserRequest) (err error)
+	GetUserByID(ctx context.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (data dtos.GetUserByIDResponse, err error)
+	UpdateUser(ctx context.Context, claims dtos.AuthClaims, params dtos.UpdateUserParams) (err error)
+	DeleteUser(ctx context.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (err error)
 }
 
 type UserServiceImpl struct {
@@ -30,8 +30,8 @@ func NewUserService(ioc di.Container) *UserServiceImpl {
 	}
 }
 
-func (s *UserServiceImpl) CreateUser(c echo.Context, params dtos.CreateUserRequest) (err error) {
-	user, err := s.repository.User.GetUserByUsername(c, params.Username)
+func (s *UserServiceImpl) CreateUser(ctx context.Context, params dtos.CreateUserRequest) (err error) {
+	user, err := s.repository.User.GetUserByUsername(ctx, params.Username)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -65,7 +65,7 @@ func (s *UserServiceImpl) CreateUser(c echo.Context, params dtos.CreateUserReque
 		PhoneNumber: params.PhoneNumber,
 	}
 
-	err = s.repository.User.CreateUser(c, newUser)
+	err = s.repository.User.CreateUser(ctx, newUser)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -77,8 +77,8 @@ func (s *UserServiceImpl) CreateUser(c echo.Context, params dtos.CreateUserReque
 	return
 }
 
-func (s *UserServiceImpl) GetUserByID(c echo.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (data dtos.GetUserByIDResponse, err error) {
-	user, err := s.repository.User.GetUserByID(c, params.ID)
+func (s *UserServiceImpl) GetUserByID(ctx context.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (data dtos.GetUserByIDResponse, err error) {
+	user, err := s.repository.User.GetUserByID(ctx, params.ID)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -107,8 +107,8 @@ func (s *UserServiceImpl) GetUserByID(c echo.Context, claims dtos.AuthClaims, pa
 	return
 }
 
-func (s *UserServiceImpl) UpdateUser(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateUserParams) (err error) {
-	user, err := s.repository.User.GetUserByID(c, params.ID)
+func (s *UserServiceImpl) UpdateUser(ctx context.Context, claims dtos.AuthClaims, params dtos.UpdateUserParams) (err error) {
+	user, err := s.repository.User.GetUserByID(ctx, params.ID)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -136,7 +136,7 @@ func (s *UserServiceImpl) UpdateUser(c echo.Context, claims dtos.AuthClaims, par
 	user.FullName = params.FullName
 	user.PhoneNumber = params.PhoneNumber
 
-	err = s.repository.User.UpdateUser(c, *user)
+	err = s.repository.User.UpdateUser(ctx, *user)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -148,8 +148,8 @@ func (s *UserServiceImpl) UpdateUser(c echo.Context, claims dtos.AuthClaims, par
 	return
 }
 
-func (s *UserServiceImpl) DeleteUser(c echo.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (err error) {
-	user, err := s.repository.User.GetUserByID(c, params.ID)
+func (s *UserServiceImpl) DeleteUser(ctx context.Context, claims dtos.AuthClaims, params dtos.UserIDParams) (err error) {
+	user, err := s.repository.User.GetUserByID(ctx, params.ID)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -174,7 +174,7 @@ func (s *UserServiceImpl) DeleteUser(c echo.Context, claims dtos.AuthClaims, par
 		return
 	}
 
-	err = s.repository.User.DeleteUser(c, *user)
+	err = s.repository.User.DeleteUser(ctx, *user)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).

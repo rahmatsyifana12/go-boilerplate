@@ -1,20 +1,20 @@
 package repositories
 
 import (
+	"context"
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/models"
 
-	"github.com/labstack/echo/v4"
 	"github.com/sarulabs/di"
 	"gorm.io/gorm"
 )
 
 type TodoRepository interface {
-	CreateTodo(c echo.Context, todo models.Todo) (err error)
-	GetTodoByID(c echo.Context, todoID uint) (todo *models.Todo, err error)
-	GetTodosByUserID(c echo.Context, userID uint) (todos []models.Todo, err error)
-	UpdateTodo(c echo.Context, todo models.Todo) (err error)
-	DeleteTodo(c echo.Context, todo models.Todo) (err error)
+	CreateTodo(ctx context.Context, todo models.Todo) (err error)
+	GetTodoByID(ctx context.Context, todoID uint) (todo *models.Todo, err error)
+	GetTodosByUserID(ctx context.Context, userID uint) (todos []models.Todo, err error)
+	UpdateTodo(ctx context.Context, todo models.Todo) (err error)
+	DeleteTodo(ctx context.Context, todo models.Todo) (err error)
 }
 
 type TodoRepositoryImpl struct {
@@ -27,30 +27,30 @@ func NewTodoRepository(ioc di.Container) *TodoRepositoryImpl {
 	}
 }
 
-func (r *TodoRepositoryImpl) CreateTodo(c echo.Context, todo models.Todo) error {
-	err := r.db.Create(&todo).WithContext(c.Request().Context()).Error
+func (r *TodoRepositoryImpl) CreateTodo(ctx context.Context, todo models.Todo) error {
+	err := r.db.Create(&todo).WithContext(ctx).Error
 	return err
 }
 
-func (r *TodoRepositoryImpl) GetTodoByID(c echo.Context, todoID uint) (todo *models.Todo, err error) {
-	err = r.db.Where("id = ?", todoID).Find(&todo).Limit(1).WithContext(c.Request().Context()).Error
+func (r *TodoRepositoryImpl) GetTodoByID(ctx context.Context, todoID uint) (todo *models.Todo, err error) {
+	err = r.db.Where("id = ?", todoID).Find(&todo).Limit(1).WithContext(ctx).Error
 	if todo.ID == 0 {
 		return nil, nil
 	}
 	return
 }
 
-func (r *TodoRepositoryImpl) GetTodosByUserID(c echo.Context, userID uint) (todos []models.Todo, err error) {
-	err = r.db.Where("user_id = ?", userID).Find(&todos).WithContext(c.Request().Context()).Error
+func (r *TodoRepositoryImpl) GetTodosByUserID(ctx context.Context, userID uint) (todos []models.Todo, err error) {
+	err = r.db.Where("user_id = ?", userID).Find(&todos).WithContext(ctx).Error
 	return
 }
 
-func (r *TodoRepositoryImpl) UpdateTodo(c echo.Context, todo models.Todo) error {
-	err := r.db.Save(&todo).WithContext(c.Request().Context()).Error
+func (r *TodoRepositoryImpl) UpdateTodo(ctx context.Context, todo models.Todo) error {
+	err := r.db.Save(&todo).WithContext(ctx).Error
 	return err
 }
 
-func (r *TodoRepositoryImpl) DeleteTodo(c echo.Context, todo models.Todo) error {
-	err := r.db.Delete(&todo).WithContext(c.Request().Context()).Error
+func (r *TodoRepositoryImpl) DeleteTodo(ctx context.Context, todo models.Todo) error {
+	err := r.db.Delete(&todo).WithContext(ctx).Error
 	return err
 }

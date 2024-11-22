@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/dtos"
 	"go-boilerplate/src/models"
@@ -9,17 +10,16 @@ import (
 	"go-boilerplate/src/repositories"
 	"net/http"
 
-	"github.com/labstack/echo/v4"
 	"github.com/sarulabs/di"
 	"gorm.io/gorm"
 )
 
 type TodoService interface {
-	CreateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.CreateTodoRequest) (err error)
-	GetTodoByID(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (data dtos.GetTodoByIDResponse, err error)
-	GetTodos(c echo.Context, claims dtos.AuthClaims) (data dtos.GetTodosResponse, err error)
-	UpdateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateTodoParams) (err error)
-	DeleteTodo(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (err error)
+	CreateTodo(ctx context.Context, claims dtos.AuthClaims, params dtos.CreateTodoRequest) (err error)
+	GetTodoByID(ctx context.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (data dtos.GetTodoByIDResponse, err error)
+	GetTodos(ctx context.Context, claims dtos.AuthClaims) (data dtos.GetTodosResponse, err error)
+	UpdateTodo(ctx context.Context, claims dtos.AuthClaims, params dtos.UpdateTodoParams) (err error)
+	DeleteTodo(ctx context.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (err error)
 }
 
 type TodoServiceImpl struct {
@@ -34,8 +34,8 @@ func NewTodoService(ioc di.Container) *TodoServiceImpl {
 	}
 }
 
-func (s *TodoServiceImpl) CreateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.CreateTodoRequest) (err error) {
-	user, err := s.repository.User.GetUserByID(c, claims.UserID)
+func (s *TodoServiceImpl) CreateTodo(ctx context.Context, claims dtos.AuthClaims, params dtos.CreateTodoRequest) (err error) {
+	user, err := s.repository.User.GetUserByID(ctx, claims.UserID)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -62,7 +62,7 @@ func (s *TodoServiceImpl) CreateTodo(c echo.Context, claims dtos.AuthClaims, par
 		},
 	}
 
-	err = s.repository.Todo.CreateTodo(c, newTodo)
+	err = s.repository.Todo.CreateTodo(ctx, newTodo)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -74,8 +74,8 @@ func (s *TodoServiceImpl) CreateTodo(c echo.Context, claims dtos.AuthClaims, par
 	return
 }
 
-func (s *TodoServiceImpl) GetTodoByID(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (data dtos.GetTodoByIDResponse, err error) {
-	todo, err := s.repository.Todo.GetTodoByID(c, params.ID)
+func (s *TodoServiceImpl) GetTodoByID(ctx context.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (data dtos.GetTodoByIDResponse, err error) {
+	todo, err := s.repository.Todo.GetTodoByID(ctx, params.ID)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -104,8 +104,8 @@ func (s *TodoServiceImpl) GetTodoByID(c echo.Context, claims dtos.AuthClaims, pa
 	return
 }
 
-func (s *TodoServiceImpl) GetTodos(c echo.Context, claims dtos.AuthClaims) (data dtos.GetTodosResponse, err error) {
-	todos, err := s.repository.Todo.GetTodosByUserID(c, claims.UserID)
+func (s *TodoServiceImpl) GetTodos(ctx context.Context, claims dtos.AuthClaims) (data dtos.GetTodosResponse, err error) {
+	todos, err := s.repository.Todo.GetTodosByUserID(ctx, claims.UserID)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -118,8 +118,8 @@ func (s *TodoServiceImpl) GetTodos(c echo.Context, claims dtos.AuthClaims) (data
 	return
 }
 
-func (s *TodoServiceImpl) UpdateTodo(c echo.Context, claims dtos.AuthClaims, params dtos.UpdateTodoParams) (err error) {
-	todo, err := s.repository.Todo.GetTodoByID(c, params.ID)
+func (s *TodoServiceImpl) UpdateTodo(ctx context.Context, claims dtos.AuthClaims, params dtos.UpdateTodoParams) (err error) {
+	todo, err := s.repository.Todo.GetTodoByID(ctx, params.ID)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -148,7 +148,7 @@ func (s *TodoServiceImpl) UpdateTodo(c echo.Context, claims dtos.AuthClaims, par
 	todo.Content = params.Content
 	todo.Model.UpdatedAt = s.util.Date.GetTimeNowJakarta()
 
-	err = s.repository.Todo.UpdateTodo(c, *todo)
+	err = s.repository.Todo.UpdateTodo(ctx, *todo)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -160,8 +160,8 @@ func (s *TodoServiceImpl) UpdateTodo(c echo.Context, claims dtos.AuthClaims, par
 	return
 }
 
-func (s *TodoServiceImpl) DeleteTodo(c echo.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (err error) {
-	todo, err := s.repository.Todo.GetTodoByID(c, params.ID)
+func (s *TodoServiceImpl) DeleteTodo(ctx context.Context, claims dtos.AuthClaims, params dtos.TodoIDParams) (err error) {
+	todo, err := s.repository.Todo.GetTodoByID(ctx, params.ID)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -186,7 +186,7 @@ func (s *TodoServiceImpl) DeleteTodo(c echo.Context, claims dtos.AuthClaims, par
 		return
 	}
 
-	err = s.repository.Todo.DeleteTodo(c, *todo)
+	err = s.repository.Todo.DeleteTodo(ctx, *todo)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).

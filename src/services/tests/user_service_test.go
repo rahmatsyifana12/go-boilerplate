@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"context"
 	"go-boilerplate/src/dtos"
 	"go-boilerplate/src/mock"
 	mock_repositories "go-boilerplate/src/mock/repositories"
@@ -9,14 +10,13 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
 )
 
 type UserServiceSuite struct {
 	suite.Suite
-	ctx				 echo.Context
+	ctx				 context.Context
 	ctrl             *gomock.Controller
 	userService      services.UserService
 }
@@ -25,6 +25,7 @@ func (s *UserServiceSuite) SetupTest() {
 	s.ctrl = gomock.NewController(s.T())
 	module := mock.ModuleMock(s.ctrl)
 	s.userService = services.NewUserService(module)
+	s.ctx = context.Background()
 }
 
 func (s *UserServiceSuite) TearDownTest() {

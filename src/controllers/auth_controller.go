@@ -29,6 +29,7 @@ func NewAuthController(ioc di.Container) *AuthControllerImpl {
 
 func (t *AuthControllerImpl) Login(c echo.Context) (err error) {
 	var (
+		ctx    = c.Request().Context()
 		params dtos.LoginRequest
 	)
 
@@ -40,7 +41,7 @@ func (t *AuthControllerImpl) Login(c echo.Context) (err error) {
 			SendErrorResponse(c)
 	}
 
-	res, err := t.service.Auth.Login(c, params)
+	res, err := t.service.Auth.Login(ctx, params)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusOK).
@@ -50,6 +51,10 @@ func (t *AuthControllerImpl) Login(c echo.Context) (err error) {
 }
 
 func (t *AuthControllerImpl) Logout(c echo.Context) (err error) {
+	var (
+		ctx = c.Request().Context()
+	)
+
 	authClaims, err := helpers.GetAuthClaims(c)
 	if err != nil {
 		return responses.NewError().
@@ -58,7 +63,7 @@ func (t *AuthControllerImpl) Logout(c echo.Context) (err error) {
 			WithMessage("Failed to get auth claims")
 	}
 
-	err = t.service.Auth.Logout(c, authClaims)
+	err = t.service.Auth.Logout(ctx, authClaims)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusOK).

@@ -50,3 +50,8 @@ test:
 	mkdir -p coverage
 	go test -v -coverprofile ./coverage/coverage.out ./src/services/...
 	go tool cover -html=./coverage/coverage.out -o ./coverage/coverage.html
+
+.PHONY: mocks
+mocks:
+	chmod +x ./scripts/generate_mocks.sh
+	./scripts/generate_mocks.sh

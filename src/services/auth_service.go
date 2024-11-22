@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"go-boilerplate/src/constants"
 	"go-boilerplate/src/dtos"
 	"go-boilerplate/src/pkg/helpers"
@@ -11,14 +12,13 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/labstack/echo/v4"
 	"github.com/sarulabs/di"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthService interface {
-	Login(c echo.Context, params dtos.LoginRequest) (data dtos.LoginResponse, err error)
-	Logout(c echo.Context, authClaims dtos.AuthClaims) (err error)
+	Login(ctx context.Context, params dtos.LoginRequest) (data dtos.LoginResponse, err error)
+	Logout(ctx context.Context, authClaims dtos.AuthClaims) (err error)
 }
 
 type AuthServiceImpl struct {
@@ -33,8 +33,8 @@ func NewAuthService(ioc di.Container) *AuthServiceImpl {
 	}
 }
 
-func (s *AuthServiceImpl) Login(c echo.Context, params dtos.LoginRequest) (res dtos.LoginResponse, err error) {
-	user, err := s.repository.User.GetUserByUsername(c, params.Username)
+func (s *AuthServiceImpl) Login(ctx context.Context, params dtos.LoginRequest) (res dtos.LoginResponse, err error) {
+	user, err := s.repository.User.GetUserByUsername(ctx, params.Username)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -82,8 +82,8 @@ func (s *AuthServiceImpl) Login(c echo.Context, params dtos.LoginRequest) (res d
 	return
 }
 
-func (s *AuthServiceImpl) Logout(c echo.Context, authClaims dtos.AuthClaims) (err error) {
-	user, err := s.repository.User.GetUserByID(c, authClaims.UserID)
+func (s *AuthServiceImpl) Logout(ctx context.Context, authClaims dtos.AuthClaims) (err error) {
+	user, err := s.repository.User.GetUserByID(ctx, authClaims.UserID)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -100,7 +100,7 @@ func (s *AuthServiceImpl) Logout(c echo.Context, authClaims dtos.AuthClaims) (er
 		return
 	}
 
-	err = s.repository.User.UpdateUser(c, *user)
+	err = s.repository.User.UpdateUser(ctx, *user)
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).

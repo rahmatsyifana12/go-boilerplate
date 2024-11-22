@@ -31,6 +31,7 @@ func NewUserController(ioc di.Container) *UserControllerImpl {
 
 func (t *UserControllerImpl) CreateUser(c echo.Context) (err error) {
 	var (
+		ctx    = c.Request().Context()
 		params dtos.CreateUserRequest
 	)
 
@@ -43,7 +44,7 @@ func (t *UserControllerImpl) CreateUser(c echo.Context) (err error) {
 		return
 	}
 
-	err = t.service.User.CreateUser(c, params)
+	err = t.service.User.CreateUser(ctx, params)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusCreated).
@@ -53,6 +54,7 @@ func (t *UserControllerImpl) CreateUser(c echo.Context) (err error) {
 
 func (t *UserControllerImpl) GetUserByID(c echo.Context) error {
 	var (
+		ctx    = c.Request().Context()
 		params dtos.UserIDParams
 		err    error
 	)
@@ -73,7 +75,7 @@ func (t *UserControllerImpl) GetUserByID(c echo.Context) error {
 			WithMessage("Failed to get auth claims")
 	}
 
-	data, err := t.service.User.GetUserByID(c, claims, params)
+	data, err := t.service.User.GetUserByID(ctx, claims, params)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusOK).
@@ -84,6 +86,7 @@ func (t *UserControllerImpl) GetUserByID(c echo.Context) error {
 
 func (t *UserControllerImpl) UpdateUser(c echo.Context) error {
 	var (
+		ctx    = c.Request().Context()
 		params dtos.UpdateUserParams
 		err    error
 	)
@@ -104,7 +107,7 @@ func (t *UserControllerImpl) UpdateUser(c echo.Context) error {
 			WithMessage("Failed to get auth claims")
 	}
 
-	err = t.service.User.UpdateUser(c, claims, params)
+	err = t.service.User.UpdateUser(ctx, claims, params)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusOK).
@@ -114,6 +117,7 @@ func (t *UserControllerImpl) UpdateUser(c echo.Context) error {
 
 func (t *UserControllerImpl) DeleteUser(c echo.Context) error {
 	var (
+		ctx    = c.Request().Context()
 		params dtos.UserIDParams
 		err    error
 	)
@@ -134,7 +138,7 @@ func (t *UserControllerImpl) DeleteUser(c echo.Context) error {
 			WithMessage("Failed to get auth claims")
 	}
 
-	err = t.service.User.DeleteUser(c, claims, params)
+	err = t.service.User.DeleteUser(ctx, claims, params)
 	return responses.New().
 		WithError(err).
 		WithSuccessCode(http.StatusOK).
