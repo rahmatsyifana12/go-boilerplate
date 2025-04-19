@@ -11,6 +11,9 @@ type DateUtil interface {
 type DateUtilImpl struct {}
 
 func (du DateUtilImpl) GetTimeNowJakarta() time.Time {
-	jakarta, _ := time.LoadLocation("Asia/Jakarta")
+	jakarta, err := time.LoadLocation("Asia/Jakarta")
+	if err != nil {
+		panic(err)
+	}
 	return time.Now().In(jakarta)
 }

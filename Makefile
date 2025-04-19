@@ -17,7 +17,11 @@ deploy:
 
 .PHONY: start
 start:
-	./bin/${APP_NAME}
+	bin/${APP_NAME}
+
+.PHONY: dev
+dev:
+	air -c .air.toml
 
 .PHONY: run
 run:

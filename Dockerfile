@@ -1,5 +1,5 @@
 # Use the official Golang image to build the Go app
-FROM golang:1.20-alpine AS build
+FROM golang:1.22 AS build
 
 # Set the Current Working Directory inside the container
 WORKDIR /app
@@ -16,8 +16,8 @@ COPY ./src ./src
 # Build the Go app, specifying the main package where both main.go and module.go are located
 RUN go build -o main ./src
 
-# Start a new stage from a smaller image
-FROM alpine:latest
+# Start a new stage from the official Go image for full environment support
+FROM golang:1.22
 
 # Set the working directory inside the container
 WORKDIR /root/
