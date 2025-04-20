@@ -1,43 +1,24 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres:15.0 # Use the official PostgreSQL image
-    container_name: postgres_db
-    restart: always
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB_NAME}
-      POSTGRES_USER: ${POSTGRES_USERNAME}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-    ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}" # PostgreSQL default port
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USERNAME}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   app:
     build: .
     container_name: go-boilerplate-app
-    depends_on:
-      db:
-        condition: service_healthy # Ensure app waits until db is healthy
+    environment:
+      - POSTGRES_HOST=${POSTGRES_HOST}  # The name of the PostgreSQL container
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB_NAME}
     ports:
       - "${PORT}:${PORT}"
-    env_file: 
-      - .env # Reference the .env file here
+    volumes:
+      - ./logs:/root/logs
+    env_file:
+      - .env  # Reference the .env file here
     networks:
       - app-network
 
 networks:
   app-network:
-    driver: bridge
-
-volumes:
-  db_data:
+    external: true  # Make sure both app and db containers are on the same network

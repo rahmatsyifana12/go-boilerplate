@@ -20,7 +20,7 @@ RUN go build -o main ./src
 FROM golang:1.22
 
 # Set the working directory inside the container
-WORKDIR /root/
+WORKDIR /root
 
 # Copy the pre-built Go binary from the previous stage
 COPY --from=build /app/main .
@@ -28,7 +28,7 @@ COPY --from=build /app/main .
 # Copy the .env file
 COPY .env .env
 
-# Expose port from the .env file
+# Expose port from .env using build-time ARG
 ARG PORT
 
 # Expose the dynamic port (it will be assigned in runtime from .env file)
