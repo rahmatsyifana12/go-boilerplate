@@ -6,7 +6,7 @@ A modular, production-ready Golang boilerplate application that supports local a
 
 ## 📦 Tech Stack
 
-- **Golang** `1.22`
+- **Golang** `1.24`
 - **PostgreSQL**
 - **Redis**
 - **Docker & Docker Compose**

@@ -11,8 +11,8 @@ import (
 
 func NewPostgresClient() (*gorm.DB, error) {
 	var (
-		db			*gorm.DB
-		err			error
+		db  *gorm.DB
+		err error
 	)
 
 	err = godotenv.Load(".env")

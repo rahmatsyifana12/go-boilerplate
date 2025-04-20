@@ -12,8 +12,8 @@ import (
 
 func NewRedisClient() (*redis.Client, error) {
 	var (
-		rdb			*redis.Client
-		err			error
+		rdb *redis.Client
+		err error
 	)
 
 	err = godotenv.Load(".env")
@@ -21,22 +21,21 @@ func NewRedisClient() (*redis.Client, error) {
 		return nil, err
 	}
 
-	redis_db, err := strconv.Atoi(os.Getenv("REDIS_DB"))
+	redisDb, err := strconv.Atoi(os.Getenv("REDIS_DB"))
 	if err != nil {
 		return nil, err
 	}
 
 	rdb = redis.NewClient(&redis.Options{
-        Addr:     fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT")),
-        Password: os.Getenv("REDIS_PASSWORD"),
-        DB:       redis_db,
-    })
+		Addr:     fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT")),
+		Password: os.Getenv("REDIS_PASSWORD"),
+		DB:       redisDb,
+	})
 
-
-    _, err = rdb.Ping(context.TODO()).Result()
-    if err != nil {
-        return nil, err
-    }
+	_, err = rdb.Ping(context.TODO()).Result()
+	if err != nil {
+		return nil, err
+	}
 
 	return rdb, nil
 }

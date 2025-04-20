@@ -1,5 +1,8 @@
-# Use the official Golang image to build the Go app
-FROM golang:1.22 AS build
+# Use the official Golang Alpine image to build the Go app
+FROM golang:1.24-alpine AS build
+
+# Install Git and other dependencies
+RUN apk add --no-cache git
 
 # Set the Current Working Directory inside the container
 WORKDIR /app
@@ -7,35 +10,41 @@ WORKDIR /app
 # Copy go.mod and go.sum files first to leverage Docker cache for dependencies
 COPY go.mod go.sum ./
 
-# Download all Go modules
+# Download Go modules
 RUN go mod download
 
-# Copy the source code, including the module.go file and other .go files
+# Copy the source code
 COPY ./src ./src
 
-# Build the Go app, specifying the main package where both main.go and module.go are located
+# Build the Go app
 RUN go build -o main ./src
 
-# Start a new stage from the official Go image for full environment support
-FROM golang:1.22
+# Start a new minimal runtime container
+FROM golang:1.24-alpine
 
 # Set the working directory inside the container
 WORKDIR /root
 
-# Copy the pre-built Go binary from the previous stage
+# Install tzdata for timezone support
+RUN apk add --no-cache tzdata
+
+# Set timezone to Asia/Jakarta
+ENV TZ=Asia/Jakarta
+RUN cp /usr/share/zoneinfo/Asia/Jakarta /etc/localtime && \
+    echo "Asia/Jakarta" > /etc/timezone
+
+# Copy the pre-built Go binary
 COPY --from=build /app/main .
 
 # Copy the .env file
 COPY .env .env
 
-# Expose port from .env using build-time ARG
-ARG PORT
-
-# Expose the dynamic port (it will be assigned in runtime from .env file)
-EXPOSE ${PORT}
-
 # Set environment variables from the .env file
 ENV $(cat .env | xargs)
+
+# Expose port from .env using build-time ARG
+ARG PORT
+EXPOSE ${PORT}
 
 # Command to run the executable
 CMD ["./main"]
