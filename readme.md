@@ -23,8 +23,8 @@ A modular, production-ready Golang boilerplate application that supports local a
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/go-boilerplate-app.git
-cd go-boilerplate-app
+git clone https://github.com/your-username/go-boilerplate.git
+cd go-boilerplate
 ```
 
 ### 2. Create and Configure `.env`
