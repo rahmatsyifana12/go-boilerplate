@@ -23,7 +23,7 @@ A modular, production-ready Golang boilerplate application that supports local a
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/go-boilerplate.git
+git clone https://github.com/rahmatsyifana12/go-boilerplate.git
 cd go-boilerplate
 ```
 
@@ -127,8 +127,20 @@ HTML coverage report will be available at `./coverage/coverage.html`.
 ├── scripts/
 │   └── generate_mocks.sh
 ├── src/
+│   ├── constants
+│   ├── controllers
+│   ├── dtos
+│   ├── logger
+│   ├── middlewares
+│   ├── mock
+│   ├── mocks
+│   ├── models
+│   ├── pkg
+│   ├── repositories
+│   ├── services
 │   ├── main.go
-│   └── ...
+│   ├── module.go
+│   └── routes.go
 └── coverage/
 ```
 
