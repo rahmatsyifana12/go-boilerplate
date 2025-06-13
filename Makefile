@@ -1,36 +1,36 @@
 include .env
 
-APP_NAME := todo-app-backend
-SOURCE_PATH := ./src/
+APP_NAME := go-boilerplate
 MIGRATION_DIR := ./migrations
 
 DBMATE_URL := postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB_NAME}?sslmode=disable
 
-.PHONY: build
-build:
-	go build -v -o bin/${APP_NAME} ./src
+.PHONY: build-rest
+build-rest:
+	go build -v -o ./bin/${APP_NAME} ./internal/apps/rest
 
-.PHONY: deploy
-deploy:
-	go build -v -o bin/${APP_NAME} ./src
+.PHONY: deploy-rest
+deploy-rest:
+	go build -v -o ./bin/${APP_NAME} ./internal/apps/rest
 	    sudo supervisorctl restart ${APP_NAME}
 
-.PHONY: start
-start:
-	bin/${APP_NAME}
+.PHONY: start-rest
+start-rest:
+	chmod +x ./bin/${APP_NAME}
+	./bin/${APP_NAME}
 
-.PHONY: dev
-dev:
+.PHONY: start-rest-dev
+start-rest-dev:
 	air -c .air.toml
 
-.PHONY: run
-run:
-	go run ./src
+.PHONY: run-rest
+run-rest:
+	go run ./internal/apps/rest
 
-.PHONY: compile
-compile:
-	GOOS=linux GOARCH=386 go build -o bin/main-linux-386 ./src
-	GOOS=windows GOARCH=386 go build -o bin/main-windows-386 ./src
+.PHONY: compile-rest
+compile-rest:
+	GOOS=linux GOARCH=386 go build -o ./bin/main-linux-386 ./internal/apps/rest
+	GOOS=windows GOARCH=386 go build -o ./bin/main-windows-386 ./internal/apps/rest
 
 .PHONY: migration-up
 migration-up:
@@ -52,7 +52,7 @@ migration-down-1:
 .PHONY: test
 test:
 	mkdir -p coverage
-	go test -v -coverprofile ./coverage/coverage.out ./src/services/...
+	go test -v -coverprofile ./coverage/coverage.out ./internal/usecases/...
 	go tool cover -html=./coverage/coverage.out -o ./coverage/coverage.html
 
 .PHONY: mocks

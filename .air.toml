@@ -2,9 +2,9 @@ root = "."
 tmp_dir = "bin"
 
 [build]
-cmd = "go build -o ./bin/todo-app-backend ./src"
-bin = "bin/todo-app-backend"
-full_bin = "APP_ENV=dev APP_USER=air ./bin/todo-app-backend"
+cmd = "go build -v -o ./bin/go-boilerplate ./internal/apps/rest"
+bin = "bin/go-boilerplate"
+full_bin = "APP_ENV=dev APP_USER=air ./bin/go-boilerplate"
 include_ext = ["go", "tpl", "tmpl", "json", "sql", "yaml"]
 exclude_dir = ["tmp", "vendor", "build"]
 include_dir = []

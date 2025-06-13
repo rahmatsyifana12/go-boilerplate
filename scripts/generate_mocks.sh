@@ -4,9 +4,9 @@ echo "Generating mocks..."
 
 # Define an array of commands
 declare -a MOCK_COMMANDS=(
-    "rm -rf ./src/mocks"
-    "mockgen -source=./src/repositories/user_repository.go -destination=./src/mocks/mock_user_repository.go -package=mocks"
-    "mockgen -source=./src/repositories/todo_repository.go -destination=./src/mocks/mock_todo_repository.go -package=mocks"
+    "rm -rf ./internal/mocks"
+    "mockgen -source=./internal/repositories/user_repository.go -destination=./internal/mocks/mock_user_repository.go -package=mocks"
+    "mockgen -source=./internal/repositories/todo_repository.go -destination=./internal/mocks/mock_todo_repository.go -package=mocks"
 )
 
 # Iterate over the commands and execute them
