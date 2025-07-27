@@ -24,7 +24,7 @@ type TodoHandlerImpl struct {
 	usecase *usecases.Usecase
 }
 
-func NewTodoHandler(ioc di.Container) *TodoHandlerImpl {
+func NewTodoHandler(ioc di.Container) TodoHandler {
 	return &TodoHandlerImpl{
 		usecase: ioc.Get(constants.Usecase).(*usecases.Usecase),
 	}

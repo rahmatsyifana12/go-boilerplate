@@ -1,6 +1,7 @@
 package apps
 
 import (
+	"go-boilerplate/internal/apps/event/subscribers"
 	"go-boilerplate/internal/apps/rest/handlers"
 	"go-boilerplate/internal/constants"
 	"go-boilerplate/internal/pkg/databases"
@@ -50,6 +51,12 @@ func NewIOC() di.Container {
 			Name: constants.Util,
 			Build: func(ctn di.Container) (interface{}, error) {
 				return utils.NewUtil(), nil
+			},
+		},
+		di.Def{
+			Name: constants.Subscriber,
+			Build: func(ctn di.Container) (interface{}, error) {
+				return subscribers.NewSubscriber(builder.Build()), nil
 			},
 		},
 	)

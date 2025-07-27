@@ -23,7 +23,7 @@ type UserHandlerImpl struct {
 	usecase *usecases.Usecase
 }
 
-func NewUserHandler(ioc di.Container) *UserHandlerImpl {
+func NewUserHandler(ioc di.Container) UserHandler {
 	return &UserHandlerImpl{
 		usecase: ioc.Get(constants.Usecase).(*usecases.Usecase),
 	}

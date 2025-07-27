@@ -21,7 +21,7 @@ type AuthHandlerImpl struct {
 	usecase *usecases.Usecase
 }
 
-func NewAuthHandler(ioc di.Container) *AuthHandlerImpl {
+func NewAuthHandler(ioc di.Container) AuthHandler {
 	return &AuthHandlerImpl{
 		usecase: ioc.Get(constants.Usecase).(*usecases.Usecase),
 	}

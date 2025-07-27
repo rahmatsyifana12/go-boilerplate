@@ -1,9 +1,10 @@
 package constants
 
-type ContextKey string
+import "time"
 
 const (
 	AuthClaimsKey   = "auth-claims"
 	AccessToken     = "access-token"
-	RequestIDKey    = ContextKey("requestid")
+	RequestIDKey    = "request-id"
+	TimeoutDuration = 15 * time.Second
 )

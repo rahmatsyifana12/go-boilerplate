@@ -119,29 +119,45 @@ HTML coverage report will be available at `./coverage/coverage.html`.
 
 ```
 .
-├── Dockerfile
-├── docker-compose.yml
-├── .env
-├── Makefile
-├── migrations/
+├── .circleci/
+├── coverage/
+├── internal/
+│   ├── apps/
+│   │   └── rest/
+│   │       ├── handlers/
+│   │       ├── middlewares/
+│   │       ├── app_module.go
+│   │       ├── app_routes.go
+│   │       ├── main.go
+│   │       └── module.go
+│   ├── constants/
+│   ├── dtos/
+│   ├── logger/
+│   ├── mock/
+│   ├── mocks/
+│   ├── models/
+│   ├── pkg/
+│   │   ├── databases/
+│   │   ├── helpers/
+│   │   ├── responses/
+│   │   └── utils/
+│   ├── repositories/
+│   └── usecases/
+|   logs/
+|   migrations/
 ├── scripts/
 │   └── generate_mocks.sh
-├── src/
-│   ├── constants
-│   ├── controllers
-│   ├── dtos
-│   ├── logger
-│   ├── middlewares
-│   ├── mock
-│   ├── mocks
-│   ├── models
-│   ├── pkg
-│   ├── repositories
-│   ├── services
-│   ├── main.go
-│   ├── module.go
-│   └── routes.go
-└── coverage/
+├── .env
+├── .env.example
+├── .air.toml
+├── .gitignore
+├── docker-compose.yml
+├── docker-compose.yml.example
+├── Dockerfile
+├── go.mod
+├── go.sum
+├── Makefile
+└── readme.md
 ```
 
 ---

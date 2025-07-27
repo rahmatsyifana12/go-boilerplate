@@ -45,7 +45,6 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		c.Set(constants.AuthClaimsKey, claims)
 		c.Set(constants.AccessToken, token)
 
-		err = next(c)
-		return err
+		return next(c)
 	}
 }

@@ -6,18 +6,13 @@ RUN apk add --no-cache git
 
 # Set the Current Working Directory inside the container
 WORKDIR /app
-
-# Copy go.mod and go.sum files first to leverage Docker cache for dependencies
-COPY go.mod go.sum ./
+COPY . .
 
 # Download Go modules
-RUN go mod download
-
-# Copy the source code
-COPY ./src ./src
+RUN go mod tidy -v
 
 # Build the Go app
-RUN go build -o main ./src
+RUN go build -o ./dist/rest ./internal/apps/rest
 
 # Start a new minimal runtime container
 FROM golang:1.24-alpine
@@ -34,7 +29,7 @@ RUN cp /usr/share/zoneinfo/Asia/Jakarta /etc/localtime && \
     echo "Asia/Jakarta" > /etc/timezone
 
 # Copy the pre-built Go binary
-COPY --from=build /app/main .
+COPY --from=build /app/dist/rest .
 
 # Copy the .env file
 COPY .env .env
@@ -47,4 +42,4 @@ ARG PORT
 EXPOSE ${PORT}
 
 # Command to run the executable
-CMD ["./main"]
+CMD ["./rest"]

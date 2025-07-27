@@ -7,4 +7,7 @@ const (
 	Repository = "repository"
 	Controller = "controller"
 	Util	   = "util"
+	Subscriber = "subscriber"
+
+	TracerRequestID = "request-id"
 )

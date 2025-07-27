@@ -22,7 +22,9 @@ func main() {
 	e.Use(echo_middlewares.CORSWithConfig(echo_middlewares.CORSConfig{
 		AllowOrigins: strings.Split(os.Getenv("CORS_ALLOWED_ORIGINS"), ","),
 	}))
+	e.Use(middlewares.GenerateRequestID)
 	e.Use(middlewares.Log)
+	e.Use(middlewares.ContextTimeoutMiddleware)
 
 	module := Module{}
 	module.New(e)
