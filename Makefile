@@ -1,4 +1,4 @@
-include .env
+-include .env
 
 APP_NAME := go-boilerplate
 MIGRATION_DIR := ./migrations
