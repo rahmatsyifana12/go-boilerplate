@@ -37,11 +37,11 @@ jobs:
         run: make generate-mock
 
       - name: Run unit tests
-        run: go test -v -coverpkg=./internal/usecases/... -coverprofile ./coverage/cover.out ./internal/usecases/... -count=1 | tee test_output.log
+        run: make test
 
       - name: Get converage
         run: |
-          COVERAGE=$(go tool cover -func=./coverage/cover.out | grep total | awk '{print $3}' | sed 's/%//')
+          COVERAGE=$(go tool cover -func=./coverage/coverage.out | grep total | awk '{print $3}' | sed 's/%//')
           echo "Unit test coverage is ${COVERAGE}%"
 
       - name: Upload coverage report
