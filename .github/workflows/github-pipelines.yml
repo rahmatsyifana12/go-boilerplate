@@ -37,7 +37,7 @@ jobs:
         run: make generate-mock
 
       - name: Run unit tests
-        run: make test
+        run: go test -v -coverpkg=./internal/usecases/... -coverprofile ./coverage/cover.out ./internal/usecases/... -count=1 | tee test_output.log
 
       - name: Get converage
         run: |
