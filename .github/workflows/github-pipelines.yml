@@ -29,7 +29,7 @@ jobs:
       - name: Run unit tests
         run: make test
 
-      - name: Get converage
+      - name: Get coverage
         run: |
           COVERAGE=$(go tool cover -func=./coverage/coverage.out | grep total | awk '{print $3}' | sed 's/%//')
           echo "Unit test coverage is ${COVERAGE}%"
