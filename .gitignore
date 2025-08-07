@@ -5,3 +5,4 @@ logs
 coverage
 coverage.out
 internal/mocks
+test_output.log

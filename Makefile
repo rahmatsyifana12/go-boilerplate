@@ -52,10 +52,11 @@ migration-down-1:
 .PHONY: test
 test:
 	mkdir -p coverage
-	go test -v -coverprofile ./coverage/coverage.out ./internal/usecases/...
+	go test -v -coverpkg=./internal/usecases/... -coverprofile ./coverage/cover.out ./internal/usecases/... -count=1 | tee test_output.log
 	go tool cover -html=./coverage/coverage.out -o ./coverage/coverage.html
 
-.PHONY: mocks
-mocks:
+.PHONY: generate-mock
+generate-mock:
+	if [ -d ./internal/mocks ]; then find ./internal/mocks -type f -delete; fi
 	chmod +x ./scripts/generate_mocks.sh
 	./scripts/generate_mocks.sh

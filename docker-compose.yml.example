@@ -5,7 +5,7 @@ services:
     build: .
     container_name: go-boilerplate-app
     environment:
-      - POSTGRES_HOST=${POSTGRES_HOST}  # The name of the PostgreSQL container
+      - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_USER=${POSTGRES_USERNAME}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -15,10 +15,10 @@ services:
     volumes:
       - ./logs:/root/logs
     env_file:
-      - .env  # Reference the .env file here
+      - .env
     networks:
       - app-network
 
 networks:
   app-network:
-    external: true  # Make sure both app and db containers are on the same network
+    external: true
