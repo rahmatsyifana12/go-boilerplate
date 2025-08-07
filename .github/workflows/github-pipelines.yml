@@ -30,11 +30,19 @@ jobs:
       - name: Install dependencies
         run: go mod tidy
 
+      - name: Install mockgen
+        run: go install github.com/golang/mock/mockgen@v1.6.0
+
       - name: Generate mocks
         run: make generate-mock
 
       - name: Run unit tests
         run: make test
+
+      - name: Get converage
+        run: |
+          COVERAGE=$(go tool cover -func=./coverage/cover.out | grep total | awk '{print $3}' | sed 's/%//')
+          echo "Unit test coverage is ${COVERAGE}%"
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
