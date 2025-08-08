@@ -18,6 +18,7 @@ services:
       - .env
     networks:
       - app-network
+    restart: unless-stopped
 
 networks:
   app-network:
