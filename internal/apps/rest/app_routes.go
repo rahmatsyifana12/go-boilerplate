@@ -1,9 +1,9 @@
 package main
 
 import (
-	"go-boilerplate/internal/constants"
 	"go-boilerplate/internal/apps/rest/handlers"
 	"go-boilerplate/internal/apps/rest/middlewares"
+	"go-boilerplate/internal/constants"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sarulabs/di"

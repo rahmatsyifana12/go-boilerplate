@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/joho/godotenv"
 )
 
 func NewRedisClient() (*redis.Client, error) {
@@ -15,11 +14,6 @@ func NewRedisClient() (*redis.Client, error) {
 		rdb *redis.Client
 		err error
 	)
-
-	err = godotenv.Load(".env")
-	if err != nil {
-		return nil, err
-	}
 
 	redisDb, err := strconv.Atoi(os.Getenv("REDIS_DB"))
 	if err != nil {

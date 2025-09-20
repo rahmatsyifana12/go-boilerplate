@@ -10,9 +10,14 @@ import (
 	echo_middlewares "github.com/labstack/echo/v4/middleware"
 
 	"github.com/labstack/echo/v4"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	if err := godotenv.Load(".env"); err != nil {
+		panic("Failed to load environment variables with error: " + err.Error())
+	}
+
 	e := echo.New()
 
 	if err := logger.SetupLogger(); err != nil {
@@ -29,8 +34,8 @@ func main() {
 	module := Module{}
 	module.New(e)
 
-	port, found := os.LookupEnv("PORT")
-	if !found {
+	port := os.Getenv("PORT")
+	if port == "" {
 		port = "5000"
 	}
 
