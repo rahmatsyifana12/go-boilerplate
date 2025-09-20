@@ -1,11 +1,9 @@
 package apps
 
 import (
-	"go-boilerplate/internal/apps/event/subscribers"
 	"go-boilerplate/internal/apps/rest/handlers"
 	"go-boilerplate/internal/constants"
 	"go-boilerplate/internal/pkg/databases"
-	"go-boilerplate/internal/pkg/utils"
 	"go-boilerplate/internal/repositories"
 	"go-boilerplate/internal/usecases"
 
@@ -32,31 +30,19 @@ func NewIOC() di.Container {
 		di.Def{
 			Name: constants.Controller,
 			Build: func(ctn di.Container) (interface{}, error) {
-				return handlers.NewController(builder.Build()), nil
+				return handlers.NewController(ctn), nil
 			},
 		},
 		di.Def{
 			Name: constants.Usecase,
 			Build: func(ctn di.Container) (interface{}, error) {
-				return usecases.NewUsecase(builder.Build()), nil
+				return usecases.NewUsecase(ctn), nil
 			},
 		},
 		di.Def{
 			Name: constants.Repository,
 			Build: func(ctn di.Container) (interface{}, error) {
-				return repositories.NewRepository(builder.Build()), nil
-			},
-		},
-		di.Def{
-			Name: constants.Util,
-			Build: func(ctn di.Container) (interface{}, error) {
-				return utils.NewUtil(), nil
-			},
-		},
-		di.Def{
-			Name: constants.Subscriber,
-			Build: func(ctn di.Container) (interface{}, error) {
-				return subscribers.NewSubscriber(builder.Build()), nil
+				return repositories.NewRepository(ctn), nil
 			},
 		},
 	)

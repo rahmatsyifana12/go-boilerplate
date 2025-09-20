@@ -23,13 +23,11 @@ type AuthUseCase interface {
 
 type AuthUseCaseImpl struct {
 	repository *repositories.Repository
-	util       *utils.Util
 }
 
 func NewAuthUseCase(ioc di.Container) *AuthUseCaseImpl {
 	return &AuthUseCaseImpl{
 		repository: ioc.Get(constants.Repository).(*repositories.Repository),
-		util:       ioc.Get(constants.Util).(*utils.Util),
 	}
 }
 
@@ -61,7 +59,7 @@ func (s *AuthUseCaseImpl) Login(ctx context.Context, params dtos.LoginRequest) (
 	}
 
 	tokenExpireDuration := (time.Hour * 24)
-	currentTime, err := s.util.Date.GetTimeNowJakarta()
+	currentTime, err := utils.GetTimeNowJakarta()
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).

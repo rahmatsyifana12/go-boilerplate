@@ -24,13 +24,11 @@ type TodoUseCase interface {
 
 type TodoUseCaseImpl struct {
 	repository	*repositories.Repository
-	util		*utils.Util
 }
 
 func NewTodoUseCase(ioc di.Container) *TodoUseCaseImpl {
 	return &TodoUseCaseImpl{
 		repository: ioc.Get(constants.Repository).(*repositories.Repository),
-		util:       ioc.Get(constants.Util).(*utils.Util),
 	}
 }
 
@@ -52,7 +50,7 @@ func (s *TodoUseCaseImpl) CreateTodo(ctx context.Context, claims dtos.AuthClaims
 		return
 	}
 
-	currentTime, err := s.util.Date.GetTimeNowJakarta()
+	currentTime, err := utils.GetTimeNowJakarta()
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).
@@ -156,7 +154,7 @@ func (s *TodoUseCaseImpl) UpdateTodo(ctx context.Context, claims dtos.AuthClaims
 	todo.Title = params.Title
 	todo.Content = params.Content
 
-	currentTime, err := s.util.Date.GetTimeNowJakarta()
+	currentTime, err := utils.GetTimeNowJakarta()
 	if err != nil {
 		err = responses.NewError().
 			WithError(err).

@@ -6,7 +6,6 @@ const (
 	Usecase    = "usecase"
 	Repository = "repository"
 	Controller = "controller"
-	Util	   = "util"
 	Subscriber = "subscriber"
 
 	TracerRequestID = "request-id"
